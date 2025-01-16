@@ -296,6 +296,19 @@ const player = new Player({
 
 
 /**
+ * @param {Entity[]} entities
+ */
+function isAlive(entities) {
+    for (const entity of entities) {
+        if (!entity.isAlive()) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
  * @param {Entity} player
  * @param {Entity} enemy
  * @returns {Promise<void>}
@@ -305,8 +318,10 @@ async function startBattle(player, enemy) {
     viewport.append(enemy.getHtml());
     viewport.append(player.getHtml());
 
+    const entities = [player, enemy];
+
     while (true) {
-        if (!enemy.isAlive() || !player.isAlive()) {
+        if (!isAlive(entities)) {
             break;
         }
 
@@ -335,19 +350,39 @@ async function startBattle(player, enemy) {
 
         if (value > 0) {
             await ps.perform(player, enemy, es);
+            if (!isAlive(entities)) {
+                break;
+            }
         }
         
         if (value < 0) {
             await es.perform(enemy, player, ps);
+            if (!isAlive(entities)) {
+                break;
+            }
         }
 
         for (const effect of player.effects) {
             await effect.endOfRound();
+            if (!isAlive(entities)) {
+                break;
+            }
         }
 
         for (const effect of enemy.effects) {
             await effect.endOfRound();
+            if (!isAlive(entities)) {
+                break;
+            }
         }
+    }
+
+    if (enemy.isAlive()) {
+        await showInfo([enemy.getName() + ' wins']);
+    }
+
+    if (player.isAlive()) {
+        await showInfo([player.getName() + ' wins']);
     }
 }
 
