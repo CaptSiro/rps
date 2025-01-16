@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>RPS</title>
+
+    <link rel="stylesheet" href="styles.css">
+    <script src="NumberRange.js"></script>
+    <script src="Impulse.js"></script>
+    <script src="jsml.js"></script>
+    <script src="game.js" defer></script>
+</head>
+<body>
+    <div class="battle">
+        <div class="viewport">
+            <div class="entity">
+                <h3 class="name">Billy</h3>
+                <div class="health">
+                    <div class="fill"></div>
+                </div>
+            </div>
+
+            <div class="entity player">
+                <h3 class="name">CaptSiro</h3>
+                <div class="health">
+                    <div class="fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="terminal">
+            <div class="screen" data-screen="spells">
+                <div class="prompt">Choose spell</div>
+
+                <div class="spells">
+                    <div>
+                        <div class="title">Rock</div>
+                        <div class="description">Deal heavy blow</div>
+                    </div>
+
+                    <div>
+                        <div class="title">Paper</div>
+                        <div class="description">Add one stack to speed</div>
+                    </div>
+
+                    <div>
+                        <div class="title">Scissors</div>
+                        <div class="description">Cut opponent for small amount of damage and add one stack of <span class="bleeding">bleeding</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="screen hide" data-screen="info">
+                <div class="info">
+                    <div>Billy used rock, CaptSiro used paper</div>
+                    <div>CaptSiro wins the turn</div>
+                    <div>CaptSiro increased speed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

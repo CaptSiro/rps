@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=Dokdo&family=Galindo&display=swap');
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #171717;
+
+    font-family: "Galindo", serif;
+    font-weight: 400;
+    font-style: normal;
+    color: #eee;
+
+    user-select: none;
+}
+
+
+
+.hide {
+    display: none !important;
+}
+
+.entity {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 32px;
+
+    .name {
+        font-size: 3em;
+    }
+
+    .health {
+        width: 300px;
+    }
+}
+
+.player {
+    margin-left: auto;
+}
+
+.health {
+    width: 100%;
+    height: 1.5em;
+    background-color: rgba(48, 48, 48, 0.4);
+    border: 1px solid #eee;
+
+    .fill {
+        height: 100%;
+        background-color: crimson;
+    }
+}
+
+.bleeding {
+    color: #b20a29;
+}
+
+.battle {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: 1fr max(33vh, 300px);
+
+    .viewport {
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .terminal {
+        background-color: #2e2e2e;
+        width: 100vw;
+        height: 100%;
+
+        .screen {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+
+            .prompt {
+                font-size: 1.5em;
+                margin: 16px auto;
+            }
+        }
+    }
+}
+
+.spells {
+    padding: 0 32px 32px 32px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    gap: 32px;
+    overflow: auto;
+
+    > div {
+        width: 200px;
+        height: 100%;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        background-color: #e0a95d;
+        color: black;
+
+        flex-basis: 250px;
+        flex-grow: 0;
+        flex-shrink: 0;
+
+        .title {
+            font-size: 1.5em;
+            margin: 0;
+        }
+
+        .description {
+            text-align: center;
+        }
+    }
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    height: 100%;
+
+    .dismiss {
+        color: #aaa;
+    }
+}
