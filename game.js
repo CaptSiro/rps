@@ -1,4 +1,4 @@
-const { div, h3 } = jsml;
+const { div, h3, span } = jsml;
 
 const viewport = $('.viewport');
 const screens = $$('[data-screen]');
@@ -12,14 +12,26 @@ class Effect {
     caster;
     /** @type {Entity} */
     target;
+    /** @type {string} */
+    name;
 
     /**
      * @param {Entity} caster
      * @param {Entity} target
+     * @param {string} name
      */
-    constructor(caster, target) {
+    constructor(caster, target, name) {
         this.caster = caster;
         this.target = target;
+        this.name = name;
+    }
+
+    isHarmful() {
+        return false;
+    }
+
+    getName() {
+        return this.name;
     }
 
     async bind() {}
@@ -30,9 +42,13 @@ class Effect {
 class Bleed extends Effect {
     bind() {}
 
+    isHarmful() {
+        return true;
+    }
+
     async endOfRound() {
         await showInfo([this.target.getName() + ' is bleeding']);
-        this.target.takeDamage(this.target.definition.maxHealth * 0.05, false, false);
+        await this.target.takeDamage(this.target.definition.maxHealth * 0.05, false, false);
     }
 }
 
@@ -43,10 +59,11 @@ class StatModifier extends Effect {
     /**
      * @param {Entity} caster
      * @param {Entity} target
+     * @param {string} name
      * @param {(caster: Entity, target: Entity) => Promise<void>} modifier
      */
-    constructor(caster, target, modifier) {
-        super(caster, target);
+    constructor(caster, target, name, modifier) {
+        super(caster, target, name);
         this.modifier = modifier;
     }
 
@@ -56,25 +73,40 @@ class StatModifier extends Effect {
 }
 
 /**
- * @typedef {{ title: string, description: string, uid: number }} SpellDefinition
+ * @typedef {{ title: string, description: string, disabled?: number }} SpellDefinition
  */
 
 class Spell {
-    static #uid = 0;
-    static uid() {
-        return this.#uid++;
-    }
-
-
-
     /** @type {SpellDefinition} */
     definition;
+    disabled;
 
     /**
      * @param {SpellDefinition} definition
      */
     constructor(definition) {
         this.definition = definition;
+        this.disabled = definition.disabled ?? 0;
+    }
+
+    getName() {
+        return this.definition.title;
+    }
+
+    isDisabled() {
+        return this.disabled !== 0;
+    }
+
+    /**
+     * @param {number} rounds
+     * @param {boolean} addCurrentRoundToCalculation
+     */
+    disable(rounds, addCurrentRoundToCalculation = true) {
+        this.disabled += Math.round(rounds) + (addCurrentRoundToCalculation ? 1 : 0);
+
+        if (this.disabled < 0) {
+            this.disabled = 0;
+        }
     }
 
     /**
@@ -88,7 +120,11 @@ class Spell {
     }
 
     getHtml() {
-        return div({ dataUid: this.definition.uid }, [
+        const c = this.isDisabled() ? 'disabled' : '';
+        return div({ class: c }, [
+            div({ class: 'disabled-overlay' },
+                div({ class: 'circle' }, span(_, String(this.disabled)))
+            ),
             div({ class: 'title' }, this.definition.title),
             div({ class: 'description' }, this.definition.description),
         ]);
@@ -103,7 +139,7 @@ class Rock extends Spell {
      */
     async perform(caster, target, targetSpell) {
         await showInfo([caster.getName() + ' hit ' + target.getName()]);
-        target.takeDamage(caster.definition.strength + target.getMissingHealth() * 0.05);
+        await target.takeDamage(caster.definition.strength + target.getMissingHealth() * 0.05);
     }
 }
 
@@ -114,10 +150,27 @@ class Paper extends Spell {
      * @param {Spell} targetSpell
      */
     async perform(caster, target, targetSpell) {
-        await caster.addEffect(new StatModifier(caster, target, async c => {
-            c.definition.speed += c.definition.speed * 0.1;
-            await showInfo([caster.getName() + "'s speed increased"]);
-        }));
+        const spell = target.getSpell(targetSpell.getName());
+        spell?.disable(1);
+        caster.heal(caster.definition.strength);
+
+        /** @type {Effect|undefined} */
+        let effect = undefined;
+        for (let i = 0; i < caster.effects.length; i++) {
+            if (caster.effects[i].isHarmful()) {
+                effect = caster.effects[i];
+                caster.effects.splice(i, 1);
+                break;
+            }
+        }
+
+        const removedNotice = effect !== undefined
+            ? ', removed ' + effect?.getName()
+            : '';
+        await showInfo([
+            caster.getName() + ' healed' + removedNotice + ', and disabled ' + target.getName() + "'s "
+            + targetSpell.getName() + ' spell for one round.'
+        ]);
     }
 }
 
@@ -129,8 +182,8 @@ class Scissors extends Spell {
      */
     async perform(caster, target, targetSpell) {
         await showInfo([caster.getName() + ' cut ' + target.getName()]);
-        target.takeDamage(caster.definition.strength * 0.1 + target.definition.maxHealth * 0.05);
-        await target.addEffect(new Bleed(caster, target));
+        await target.takeDamage(caster.definition.strength * 0.1 + target.definition.maxHealth * 0.05);
+        await target.addEffect(new Bleed(caster, target, 'Bleeding'));
     }
 }
 
@@ -144,6 +197,7 @@ class Entity {
     /** @type {Impulse<number>} */
     healthImpulse;
     healthBar;
+    /** @type {Spell[]} */
     spells;
     /** @type {Effect[]} */
     effects;
@@ -167,6 +221,26 @@ class Entity {
 
     getName() {
         return this.definition.name;
+    }
+
+    newRound() {
+        for (const spell of this.spells) {
+            spell.disable(-1, false);
+        }
+    }
+
+    /**
+     * @param {string} name
+     * @returns {Spell|undefined}
+     */
+    getSpell(name) {
+        for (const spell of this.spells) {
+            if (spell.getName() === name) {
+                return spell;
+            }
+        }
+
+        return undefined;
     }
 
     async addEffect(effect) {
@@ -197,11 +271,41 @@ class Entity {
         this.healthImpulse.pulse(this.health / this.definition.maxHealth);
     }
 
+    heal(value) {
+        this.health += value;
+
+        if (this.health > this.definition.maxHealth) {
+            this.health = this.definition.maxHealth;
+        }
+
+        this.healthImpulse.pulse(this.health / this.definition.maxHealth);
+    }
+
     /**
      * @return {Promise<Spell>}
      */
     async chooseSpell() {
-        return new Promise(resolve => resolve(this.spells[Math.floor(Math.random() * this.spells.length)]));
+        return new Promise(resolve => {
+            let length = 0;
+            for (const spell of this.spells) {
+                if (!spell.isDisabled()) {
+                    length++;
+                }
+            }
+
+            let index = Math.floor(Math.random() * length);
+
+            for (const spell of this.spells) {
+                if (!spell.isDisabled()) {
+                    if (index-- === 0) {
+                        resolve(spell);
+                        return;
+                    }
+                }
+            }
+
+            // todo empty spell that looses against everything
+        });
     }
 
     getHtml() {
@@ -239,41 +343,36 @@ function pairsToMap(pairs) {
     return map;
 }
 
-const rock = new Rock({
-    uid: Spell.uid(),
+const rockDef = {
     title: 'Rock',
-    description: 'Deal heavy blow. The damage is bigger the lower the enemy\'s health is.'
-});
-const paper = new Paper({
-    uid: Spell.uid(),
+    description: 'Deal heavy blow. The damage is bigger the lower the enemy\'s health is.',
+};
+const paperDef = {
     title: 'Paper',
-    description: 'Buffs caster\'s probability to evade opponents attack'
-});
-const scissors = new Scissors({
-    uid: Spell.uid(),
+    description: 'Heals caster, removes one harmful effect, and disables opponent\'s spell for 1 round'
+};
+const scissorsDef = {
     title: 'Scissors',
     description: 'Cut opponent for small amount of damage and add one stack of bleeding.'
-});
+};
 
-/** @type {Map<Spell, Map<Spell, number>>} */
+/** @type {Map<string, Map<string, number>>} */
 const spellMap = new Map();
-spellMap.set(rock, pairsToMap([
-    [rock, 0],
-    [paper, -1],
-    [scissors, 1]
+spellMap.set(rockDef.title, pairsToMap([
+    [rockDef.title, 0],
+    [paperDef.title, -1],
+    [scissorsDef.title, 1]
 ]));
-spellMap.set(paper, pairsToMap([
-    [rock, 1],
-    [paper, 0],
-    [scissors, -1]
+spellMap.set(paperDef.title, pairsToMap([
+    [rockDef.title, 1],
+    [paperDef.title, 0],
+    [scissorsDef.title, -1]
 ]));
-spellMap.set(scissors, pairsToMap([
-    [rock, -1],
-    [paper, 1],
-    [scissors, 0]
+spellMap.set(scissorsDef.title, pairsToMap([
+    [rockDef.title, -1],
+    [paperDef.title, 1],
+    [scissorsDef.title, 0]
 ]));
-
-const defaultSpells = [rock, paper, scissors];
 
 const enemies = [
     new Entity({
@@ -282,7 +381,7 @@ const enemies = [
         strength: 25,
         toughness: 10,
         speed: 1
-    }, defaultSpells)
+    }, [new Rock(rockDef), new Paper(paperDef), new Scissors(scissorsDef)])
 ];
 
 const player = new Player({
@@ -291,7 +390,7 @@ const player = new Player({
     strength: 20,
     toughness: 10,
     speed: 1
-}, defaultSpells);
+}, [new Rock(rockDef), new Paper(paperDef), new Scissors(scissorsDef)]);
 
 
 
@@ -325,6 +424,9 @@ async function startBattle(player, enemy) {
             break;
         }
 
+        enemy.newRound();
+        player.newRound();
+
         const enemySpell = enemy.chooseSpell();
         const playerSpell = player.chooseSpell();
         
@@ -332,7 +434,7 @@ async function startBattle(player, enemy) {
         const es = await enemySpell;
         const ps = await playerSpell;
 
-        const value = spellMap.get(ps).get(es);
+        const value = spellMap.get(ps.getName()).get(es.getName());
 
         let roundResult = 'No one wins, nothing happens.';
         if (value > 0) {
@@ -425,9 +527,11 @@ async function playerChooseSpell(spells) {
 
         for (const spell of spells) {
             const s = spell.getHtml();
-            s.addEventListener('click', () => {
-                resolve(spell);
-            });
+            if (!spell.isDisabled()) {
+                s.addEventListener('click', () => {
+                    resolve(spell);
+                });
+            }
 
             spellsScreen.append(s);
         }
