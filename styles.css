@@ -46,17 +46,24 @@ body {
 }
 
 .health {
+    position: relative;
     width: 100%;
     height: 1.5em;
     background-color: rgba(48, 48, 48, 0.4);
     border: 1px solid #eee;
 
     .fill {
+        position: absolute;
         width: 100%;
         height: 100%;
         background-color: crimson;
 
         transition: width 250ms ease-in-out;
+
+        &.secondary {
+            background-color: #e88b19;
+            transition: width 250ms 350ms ease-in-out;
+        }
     }
 }
 

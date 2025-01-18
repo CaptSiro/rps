@@ -543,12 +543,14 @@ async function playerChooseSpell(spells) {
  */
 function Health(fill) {
     const bar = div({ class: 'fill' });
+    const secondary = div({ class: 'fill secondary' });
 
     fill.listen(v => {
         bar.style.width = (v * 100) + '%';
+        secondary.style.width = (v * 100) + '%';
     });
 
-    return div({ class: 'health' }, bar);
+    return div({ class: 'health' }, [secondary, bar]);
 }
 
 startBattle(player, enemies[0]).then();
