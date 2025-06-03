@@ -1,13 +1,14 @@
-import Rock, { prefab_rock } from "../spell/Rock";
-import Paper, { prefab_paper } from "../spell/Paper";
-import Scissors, { prefab_scissors } from "../spell/Scissors";
 import { playerChooseNewSpell, playerChooseSpell } from "../core";
-import Entity from "./Entity";
+import Entity, { EntityDefinition } from "./Entity";
+import Rock, { prefab_rock } from "../spells/Rock.ts";
+import Paper, { prefab_paper } from "../spells/Paper.ts";
+import Scissors, { prefab_scissors } from "../spells/Scissors.ts";
+import jsml from "../../lib/jsml/jsml.ts";
+import Spell from "../spells/Spell.ts";
 
 
 
-/** @type {EntityDefinition} */
-export const prefab_player = {
+export const prefab_player: EntityDefinition = {
     name: "Player",
     maxHealth: 100,
     strength: 20,
@@ -20,14 +21,11 @@ export function prefab_playerSpells() {
 }
 
 export default class Player extends Entity {
-    /**
-     * @return {Promise<Spell>}
-     */
-    async chooseSpell() {
+    public async onChooseSpell(): Promise<Spell> {
         return await playerChooseSpell(this.spells);
     }
 
-    async addOneSpell(spells) {
+    public async onDrawSpells(spells: Spell[]): Promise<void> {
         this.addSpell(
             await playerChooseNewSpell(spells)
         );
@@ -37,7 +35,7 @@ export default class Player extends Entity {
         return jsml.div({ class: 'entity player' }, [
             jsml.h3({ class: 'name' }, this.definition.name),
             this.healthBar,
-            this.spellsPreview
+            this.spellPreview
         ]);
     }
 }

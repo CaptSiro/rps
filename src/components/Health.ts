@@ -1,7 +1,9 @@
-/**
- * @param {Impulse<number>} fill
- */
-export default function Health(fill) {
+import Impulse from "../../lib/Impulse";
+import jsml from "../../lib/jsml/jsml";
+
+
+
+export default function Health(fill: Impulse<number>): HTMLElement {
     const bar = jsml.div({ class: 'fill' });
     const secondary = jsml.div({ class: 'fill secondary' });
 

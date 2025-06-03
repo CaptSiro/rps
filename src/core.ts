@@ -1,3 +1,10 @@
+import jsml, { _ } from "../lib/jsml/jsml.ts";
+import { $, $$, assert, is, wait } from "../lib/std.ts";
+import { Opt } from "../lib/types.ts";
+import Spell from "./spells/Spell.ts";
+
+
+
 const { div } = jsml;
 
 export const SCREEN_SPELLS = 'spells';
@@ -5,21 +12,21 @@ export const SCREEN_INFO = 'info';
 export const SCREEN_ADDITION = 'addition';
 
 const screens = $$('[data-screen]');
-const infoScreen = $('.info');
+const infoScreen = assert($('.info'));
 
 
 
-export function showScreen(screen) {
+export function showScreen(screen: string): void {
     for (const s of screens) {
         s.classList.toggle('hide', s.dataset.screen !== screen);
     }
 }
 
-function getScreensSpells(screen) {
-    return $(`[data-screen="${screen}"] .spells`);
+function getScreensSpells(screen: string): HTMLElement {
+    return assert($(`[data-screen="${screen}"] .spells`));
 }
 
-export async function showInfo(lines, delay = 500) {
+export async function showInfo(lines: string[], delay: number = 500): Promise<unknown> {
     if (lines.length === 0) {
         return Promise.resolve();
     }
@@ -27,14 +34,11 @@ export async function showInfo(lines, delay = 500) {
     showScreen('info');
     infoScreen.textContent = '';
 
-    let isFirst = true;
     for (const line of lines) {
-        await new Promise(r => setTimeout(r, delay));
-        isFirst = false;
+        await wait(delay);
         infoScreen.append(div(_, line));
     }
 
-    await new Promise(r => setTimeout(r, delay));
     infoScreen.append(div({ class: 'dismiss' }, '(Click to dismiss)'));
 
     return new Promise(resolve => {
@@ -42,11 +46,7 @@ export async function showInfo(lines, delay = 500) {
     });
 }
 
-/**
- * @param {Spell[]} spells
- * @returns {Promise<Spell>}
- */
-export async function playerChooseSpell(spells) {
+export async function playerChooseSpell(spells: Spell[]): Promise<Spell> {
     return new Promise(resolve => {
         showScreen(SCREEN_SPELLS);
         const spellsContainer = getScreensSpells(SCREEN_SPELLS);
@@ -63,11 +63,7 @@ export async function playerChooseSpell(spells) {
     });
 }
 
-/**
- * @param {Spell[]} spells
- * @returns {Promise<Spell>}
- */
-export async function playerChooseNewSpell(spells) {
+export async function playerChooseNewSpell(spells: Spell[]): Promise<Spell> {
     return new Promise(resolve => {
         showScreen(SCREEN_ADDITION);
         const spellsContainer = getScreensSpells(SCREEN_ADDITION);
