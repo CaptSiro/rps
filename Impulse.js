@@ -1,7 +1,9 @@
 /**
  * @template T
  * @typedef {(value: T) => any} ImpulseListener
- *
+ */
+
+/**
  * @template T
  * @typedef {{ pulseOnDuplicate?: boolean, default?: T }} ImpulseOptions
  */
@@ -66,11 +68,11 @@ class Impulse {
      * @param {I} value
      */
     pulse(value) {
-        if (this.#options?.pulseOnDuplicate === false && value === this.lastValue) {
+        if (this.#options?.pulseOnDuplicate === false && value === this.#lastValue) {
             return;
         }
 
-        this.lastValue = value;
+        this.#lastValue = value;
 
         for (let i = 0; i < this.#listeners.length; i++) {
             this.#listeners[i](value);
@@ -81,6 +83,6 @@ class Impulse {
      * @returns {I | undefined}
      */
     value() {
-        return this.lastValue;
+        return this.#lastValue;
     }
 }
