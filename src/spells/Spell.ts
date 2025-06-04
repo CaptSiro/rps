@@ -1,12 +1,15 @@
 import jsml, { _ } from "../../lib/jsml/jsml";
 import Impulse from "../../lib/Impulse";
 import Entity from "../entities/Entity.ts";
+import Type, { Outcome, TypePrefab } from "./types/Type.ts";
+import { prefab_none } from "./None.ts";
 
 
 
-export type SpellDefinition = {
+export type SpellPrefab = {
     title: string,
     description: string,
+    type: TypePrefab,
 
     disabled?: number,
     uses?: number
@@ -20,17 +23,21 @@ export default class Spell {
     protected readonly state: Impulse<Spell>;
     protected readonly uses: number;
 
-    protected definition: SpellDefinition;
+    protected type: Type;
     protected disabled: number;
     protected usesLeft: number;
 
 
 
-    public constructor(definition: SpellDefinition) {
-        this.definition = definition;
-        this.disabled = definition.disabled ?? 0;
-        this.uses = definition.uses ?? 1;
+    public constructor(
+        protected prefab: SpellPrefab
+    ) {
+        this.type = new Type(prefab.type);
+        this.disabled = prefab.disabled ?? 0;
+
+        this.uses = prefab.uses ?? 1;
         this.usesLeft = this.uses;
+
         this.state = new Impulse<Spell>({
             default: this,
             pulseOnDuplicate: true
@@ -47,12 +54,12 @@ export default class Spell {
         return !this.isDisabled() && this.usesLeft > 0;
     }
 
-    public getDefinition(): SpellDefinition {
-        return this.definition;
+    public getDefinition(): SpellPrefab {
+        return this.prefab;
     }
 
     public getName(): string {
-        return this.definition.title;
+        return this.prefab.title;
     }
 
     public getState(): Impulse<Spell> {
@@ -83,6 +90,10 @@ export default class Spell {
         throw new Error('Spell is not implemented');
     }
 
+    public compare(other: Spell): Outcome {
+        return this.type.compare(other.type);
+    }
+
     public getHtml(): HTMLElement {
         let cssClass = '';
         if (this.isDisabled()) {
@@ -91,15 +102,16 @@ export default class Spell {
             cssClass = 'not-available';
         }
 
-        return div({ class: "overlay-container " + cssClass }, [
+        const backgroundColor = this.type.getColor().toString();
+        return div({ class: "overlay-container " + cssClass, style: { backgroundColor } }, [
             div({ class: 'disabled-overlay' },
                 div({ class: 'circle' }, span(_, String(this.disabled)))
             ),
             div({ class: 'not-available-overlay' },
                 div({ class: 'circle' }, span(_, 'X'))
             ),
-            div({ class: 'title' }, this.definition.title),
-            div({ class: 'description' }, this.definition.description),
+            div({ class: 'title' }, this.prefab.title),
+            div({ class: 'description' }, this.prefab.description),
         ]);
     }
 

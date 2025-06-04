@@ -1,13 +1,15 @@
-import Spell, { SpellDefinition } from "./Spell";
+import Spell, { SpellPrefab } from "./Spell";
 import { showInfo } from "../core";
 import Entity from "../entities/Entity.ts";
 import DamageOnEvent, { prefab_bleeding } from "../effects/DamageOnEvent.ts";
+import { prefab_assassin } from "./types/Assassin";
 
 
 
-export const prefab_scissors: SpellDefinition = {
+export const prefab_scissors: SpellPrefab = {
     title: 'Scissors',
-    description: 'Cut opponent for small amount of damage and add one stack of bleeding.'
+    description: 'Cut opponent for small amount of damage and add one stack of bleeding.',
+    type: prefab_assassin
 };
 
 export default class Scissors extends Spell {
