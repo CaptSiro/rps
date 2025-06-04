@@ -1,7 +1,3 @@
-import { Opt } from "./types.ts";
-
-
-
 export type ImpulseListener<T> = (value: T) => any;
 
 

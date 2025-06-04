@@ -225,7 +225,12 @@ export default class Entity implements EntityEvent {
     }
 
     public async onEvent(event: string): Promise<void> {
-        return await EntityEvent_onEvent(event, this);
+        return new Promise(resolve => {
+            Promise.all([
+                this.propagateEventToEffects(event),
+                EntityEvent_onEvent(event, this)
+            ]).then(() => resolve());
+        });
     }
 
 
