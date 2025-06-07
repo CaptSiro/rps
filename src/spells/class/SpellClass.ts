@@ -2,13 +2,13 @@ import Color from "../../Color.ts";
 
 
 
-export type TypeIdentifier = string;
+export type ClassIdentifier = string;
 
-export type TypePrefab = {
-    name: TypeIdentifier,
+export type ClassPrefab = {
+    name: ClassIdentifier,
     color: Color,
-    loosing: TypeIdentifier[],
-    winning: TypeIdentifier[]
+    loosing: ClassIdentifier[],
+    winning: ClassIdentifier[]
 }
 
 export type Loss = -1;
@@ -22,12 +22,12 @@ export const DRAW: Draw = 0;
 
 
 
-export default class Type {
-    public static outcome(caller: Type[], opponent: Type[]): Outcome {
+export default class SpellClass {
+    public static outcome(caller: SpellClass[], opponent: SpellClass[]): Outcome {
         // sum = sum_i^n(sum_j^m(compare(c_i, o_j)))
-        const sum = caller.reduce((s, callerType) => {
-            return s + opponent.reduce((ss, opponentType) => {
-                return ss + callerType.compare(opponentType);
+        const sum = caller.reduce((s, callerClass) => {
+            return s + opponent.reduce((ss, opponentClass) => {
+                return ss + callerClass.compare(opponentClass);
             }, 0);
         }, 0);
 
@@ -42,7 +42,7 @@ export default class Type {
 
 
     public constructor(
-        protected prefab: TypePrefab
+        protected prefab: ClassPrefab
     ) {}
 
 
@@ -55,7 +55,7 @@ export default class Type {
         return this.prefab.color;
     }
 
-    public compare(opponent: Type): Outcome {
+    public compare(opponent: SpellClass): Outcome {
         if (this.prefab.loosing.includes(opponent.getName())) {
             return LOSS;
         }

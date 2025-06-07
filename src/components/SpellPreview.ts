@@ -1,7 +1,7 @@
 import jsml from "../../lib/jsml/jsml";
 import Impulse from "../../lib/Impulse";
 import Spell from "../spells/Spell.ts";
-import { Opt } from "../../lib/types.ts";
+import { Opt } from "../../types.ts";
 import { is } from "../../lib/std.ts";
 
 

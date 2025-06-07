@@ -1,6 +1,5 @@
 import addContent from "./add-content.js";
 import addProps from "./add-props.js";
-import { Opt } from "../types.ts";
 
 
 

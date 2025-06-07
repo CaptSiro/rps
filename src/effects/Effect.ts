@@ -4,18 +4,11 @@ import GameEvent, { GAME_EVENT_ROUND_END, GAME_EVENT_ROUND_START, GameEvent_onEv
 
 
 export default abstract class Effect implements GameEvent {
-    protected readonly name: string;
-
-    protected caster: Entity;
-    protected target: Entity;
-
-
-
-    protected constructor(caster: Entity, target: Entity, name: string) {
-        this.caster = caster;
-        this.target = target;
-        this.name = name;
-    }
+    protected constructor(
+        protected caster: Entity,
+        protected target: Entity,
+        protected name: string
+    ) {}
 
 
 

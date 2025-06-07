@@ -1,16 +1,16 @@
 import { $, assert } from "../lib/std.ts";
 import Entity, { prefab_billy } from "./entities/Entity.ts";
-import Player, { prefab_player, prefab_playerSpells } from "./entities/Player.ts";
+import Player, { prefab_player, prefab_playerDeck, prefab_playerInitialSpells } from "./entities/Player.ts";
 import { showInfo } from "./core.ts";
 import { GAME_EVENT_ROUND_END, GAME_EVENT_ROUND_START } from "./GameEvent.ts";
-import { DRAW, WIN } from "./spells/types/Type";
+import { DRAW, LOSS, WIN } from "./spells/class/SpellClass.ts";
 
 
 
 const viewport = assert($('.viewport'));
 
-const enemies = [new Entity(prefab_billy, prefab_playerSpells())];
-const player = new Player(prefab_player, prefab_playerSpells());
+const enemies = [new Entity(prefab_billy, prefab_playerInitialSpells(), prefab_playerDeck)];
+const player = new Player(prefab_player, prefab_playerInitialSpells(), prefab_playerDeck);
 
 
 
@@ -55,7 +55,7 @@ async function startBattle(player: Entity, enemy: Entity): Promise<void> {
         }
 
         if (playerOutcome === WIN) {
-            await showInfo([player.getDefinition().name + ' wins the round.']);
+            await showInfo([player.getPrefab().name + ' wins the round.']);
             await ps.perform(player, enemy, es);
             if (!Entity.areAlive(entities)) {
                 break;
@@ -63,15 +63,20 @@ async function startBattle(player: Entity, enemy: Entity): Promise<void> {
         }
 
         if (enemyOutcome === WIN) {
-            await showInfo([enemy.getDefinition().name + ' wins the round.']);
+            await showInfo([enemy.getPrefab().name + ' wins the round.']);
             await es.perform(enemy, player, ps);
             if (!Entity.areAlive(entities)) {
                 break;
             }
         }
 
-        ps.use();
-        es.use();
+        if (playerOutcome !== LOSS) {
+            ps.use();
+        }
+
+        if (enemyOutcome !== LOSS) {
+            es.use();
+        }
 
         await player.onEvent(GAME_EVENT_ROUND_END);
         if (!Entity.areAlive(entities)) {
@@ -84,14 +89,14 @@ async function startBattle(player: Entity, enemy: Entity): Promise<void> {
         }
 
         if (player.getAvailableSpellCount() === 0) {
-            await player.onDrawSpells(prefab_playerSpells());
+            await player.onDrawSpells(player.getDeck());
             for (const spell of player.getSpells()) {
                 spell.recharge();
             }
         }
 
         if (enemy.getAvailableSpellCount() === 0) {
-            await enemy.onDrawSpells(prefab_playerSpells());
+            await enemy.onDrawSpells(enemy.getDeck());
             for (const spell of enemy.getSpells()) {
                 spell.recharge();
             }

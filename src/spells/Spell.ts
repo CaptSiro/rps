@@ -1,15 +1,14 @@
 import jsml, { _ } from "../../lib/jsml/jsml";
 import Impulse from "../../lib/Impulse";
 import Entity from "../entities/Entity.ts";
-import Type, { Outcome, TypePrefab } from "./types/Type.ts";
-import { prefab_none } from "./None.ts";
+import SpellClass, { Outcome, ClassPrefab } from "./class/SpellClass.ts";
 
 
 
 export type SpellPrefab = {
     title: string,
     description: string,
-    type: TypePrefab,
+    type: ClassPrefab,
 
     disabled?: number,
     uses?: number
@@ -23,7 +22,7 @@ export default class Spell {
     protected readonly state: Impulse<Spell>;
     protected readonly uses: number;
 
-    protected type: Type;
+    protected type: SpellClass;
     protected disabled: number;
     protected usesLeft: number;
 
@@ -32,7 +31,7 @@ export default class Spell {
     public constructor(
         protected prefab: SpellPrefab
     ) {
-        this.type = new Type(prefab.type);
+        this.type = new SpellClass(prefab.type);
         this.disabled = prefab.disabled ?? 0;
 
         this.uses = prefab.uses ?? 1;

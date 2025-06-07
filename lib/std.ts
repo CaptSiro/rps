@@ -1,4 +1,4 @@
-import { Opt } from "./types.ts";
+import { Opt } from "./../types.ts";
 
 export type RelativeTimestamp = {
     name: string | any,

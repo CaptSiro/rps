@@ -5,7 +5,7 @@ import Entity from "../entities/Entity.ts";
 
 
 
-export type DamageOnEventDefinition = {
+export type DamageOnEventPrefab = {
     name: string,
     event: string,
     rounds: number,
@@ -16,24 +16,22 @@ export type DamageOnEventDefinition = {
     reduceAble?: boolean
 }
 
-export const prefab_bleeding: DamageOnEventDefinition = {
+export const prefab_bleeding: DamageOnEventPrefab = {
     name: 'Bleeding',
     event: GAME_EVENT_ROUND_END,
     rounds: 5,
-    maxHealth: .05
+    constant: 1
 };
 
 export default class DamageOnEvent extends Effect {
-    protected definition: DamageOnEventDefinition;
     protected processed: number;
 
     public constructor(
-        definition: DamageOnEventDefinition,
+        protected prefab: DamageOnEventPrefab,
         caster: Entity,
         target: Entity
     ) {
-        super(caster, target, definition.name);
-        this.definition = definition;
+        super(caster, target, prefab.name);
         this.processed = 0;
     }
 
@@ -43,8 +41,12 @@ export default class DamageOnEvent extends Effect {
         return true;
     }
 
+    public getPrefab(): DamageOnEventPrefab {
+        return this.prefab;
+    }
+
     public doRemove(): boolean {
-        return this.processed >= this.definition.rounds;
+        return this.processed >= this.prefab.rounds;
     }
 
     public getRemovedMessage(): string {
@@ -52,17 +54,17 @@ export default class DamageOnEvent extends Effect {
     }
 
     public calculateDamage(): number {
-        return (this.definition.constant ?? 0)
-            + this.target.getCurrentHealth() * (this.definition.currentHealth ?? 0)
-            + this.target.getMaxHealth() * (this.definition.maxHealth ?? 0)
-            + this.target.getMissingHealth() * (this.definition.missingHealth ?? 0);
+        return (this.prefab.constant ?? 0)
+            + this.target.getCurrentHealth() * (this.prefab.currentHealth ?? 0)
+            + this.target.getMaxHealth() * (this.prefab.maxHealth ?? 0)
+            + this.target.getMissingHealth() * (this.prefab.missingHealth ?? 0);
     }
 
 
 
     public async proc(): Promise<void> {
         await showInfo([this.target.getName() + ' is effected by ' + this.name]);
-        await this.target.takeDamage(this.calculateDamage(), false, this.definition.reduceAble ?? false);
+        await this.target.takeDamage(this.calculateDamage(), false, this.prefab.reduceAble ?? false);
         this.processed++;
     }
 
@@ -82,7 +84,7 @@ export default class DamageOnEvent extends Effect {
     }
 
     public async onEvent(event: string): Promise<void> {
-        if (event === this.definition.event) {
+        if (event === this.prefab.event) {
             await this.proc();
         }
 

@@ -3,29 +3,42 @@ import Health from "../components/Health";
 import SpellPreview from "../components/SpellPreview";
 import Impulse from "../../lib/Impulse.ts";
 import Spell from "../spells/Spell.ts";
-import { Opt } from "../../lib/types.ts";
+import { Opt } from "../../types.ts";
 import None from "../spells/None.ts";
 import jsml from "../../lib/jsml/jsml.ts";
 import EntityEvent, { EntityEvent_onEvent } from "./EntityEvent.ts";
 import Effect from "../effects/Effect.ts";
+import { Predicate } from "../../types.ts";
 
 
 
-export type EntityDefinition = {
-    name: string,
+export type EntityStats = {
     maxHealth: number,
     strength: number,
     toughness: number,
-    speed: 1,
+    intelligence: number,
+    dexterity: number,
+    luck: number,
+    speed: number,
+}
+
+export type EntityPrefab = {
+    name: string,
+    stats: EntityStats,
 }
 
 
-export const prefab_billy: EntityDefinition = {
+export const prefab_billy: EntityPrefab = {
     name: "Billy",
-    maxHealth: 100,
-    strength: 25,
-    toughness: 10,
-    speed: 1
+    stats: {
+        maxHealth: 110,
+        strength: 14,
+        toughness: 14,
+        dexterity: 6,
+        intelligence: 5,
+        luck: 10,
+        speed: 1,
+    },
 };
 
 export default class Entity implements EntityEvent {
@@ -41,8 +54,6 @@ export default class Entity implements EntityEvent {
 
 
 
-    protected readonly definition: EntityDefinition;
-
     protected health: number;
     protected readonly healthImpulse: Impulse<number>;
     protected readonly healthBar: HTMLElement;
@@ -55,11 +66,11 @@ export default class Entity implements EntityEvent {
 
 
     constructor(
-        definition: EntityDefinition,
-        protected readonly spells: Spell[]
+        protected readonly prefab: EntityPrefab,
+        protected readonly spells: Spell[],
+        protected readonly deck: () => Spell[],
     ) {
-        this.definition = definition;
-        this.health = definition.maxHealth;
+        this.health = prefab.stats.maxHealth;
         this.healthImpulse = new Impulse({ default: 1, pulseOnDuplicate: true });
         this.healthBar = Health(this.healthImpulse);
         this.spellsImpulse = new Impulse<Spell[]>({
@@ -77,12 +88,16 @@ export default class Entity implements EntityEvent {
         return this.health > 0;
     }
 
-    public getDefinition(): EntityDefinition {
-        return this.definition;
+    public getPrefab(): EntityPrefab {
+        return this.prefab;
+    }
+
+    public getStats(): EntityStats {
+        return this.prefab.stats;
     }
 
     public getMissingHealth(): number {
-        return this.definition.maxHealth - this.health;
+        return this.prefab.stats.maxHealth - this.health;
     }
 
     public getCurrentHealth(): number {
@@ -90,11 +105,15 @@ export default class Entity implements EntityEvent {
     }
 
     public getMaxHealth(): number {
-        return this.definition.maxHealth;
+        return this.prefab.stats.maxHealth;
     }
 
     public getName(): string {
-        return this.definition.name;
+        return this.prefab.name;
+    }
+
+    public getDeck(): Spell[] {
+        return this.deck();
     }
 
     public getSpell(name: string): Opt<Spell> {
@@ -105,6 +124,15 @@ export default class Entity implements EntityEvent {
         }
 
         return undefined;
+    }
+
+    public findSpell(predicate: Predicate<Spell>): Opt<[Spell, number]> {
+        const index = this.spells.findIndex(x => predicate(x));
+        if (index === -1) {
+            return;
+        }
+
+        return [this.spells[index], index];
     }
 
     public async getRandomAvailableSpell(): Promise<Spell> {
@@ -141,8 +169,29 @@ export default class Entity implements EntityEvent {
         this.spellsImpulse.pulse(this.spells);
     }
 
+
+
     public getEffects(): Effect[] {
         return this.effects;
+    }
+
+    public getEffect(name: string): Opt<Effect> {
+        for (const effect of this.effects) {
+            if (effect.getName() === name) {
+                return effect;
+            }
+        }
+
+        return undefined;
+    }
+
+    public findEffect(predicate: Predicate<Effect>): [Opt<Effect>, number] {
+        const index = this.effects.findIndex(x => predicate(x));
+        if (index === -1) {
+            return [undefined, -1];
+        }
+
+        return [this.effects[index], index];
     }
 
     async addEffect(effect: Effect): Promise<void> {
@@ -157,32 +206,32 @@ export default class Entity implements EntityEvent {
             throw new Error('Can not take NaN damage');
         }
 
-        const chance = Math.max(Math.min(this.definition.speed - 1, 1), 0);
+        const chance = Math.max(Math.min(this.prefab.stats.speed - 1, 1), 0);
         if (Math.random() < chance && evadeAble) {
             await showInfo([this.getName() + ' evaded the attack']);
             return;
         }
 
-        const reduce = this.definition.toughness === 0 || !reduceAble
+        const reduce = this.prefab.stats.toughness === 0 || !reduceAble
             ? 1
-            : (1 - 1 / this.definition.toughness);
+            : (1 - 1 / this.prefab.stats.toughness);
         this.health -= value * reduce;
 
         if (this.health < 0) {
             this.health = 0;
         }
 
-        this.healthImpulse.pulse(this.health / this.definition.maxHealth);
+        this.healthImpulse.pulse(this.health / this.prefab.stats.maxHealth);
     }
 
     public heal(value: number): void {
         this.health += value;
 
-        if (this.health > this.definition.maxHealth) {
-            this.health = this.definition.maxHealth;
+        if (this.health > this.prefab.stats.maxHealth) {
+            this.health = this.prefab.stats.maxHealth;
         }
 
-        this.healthImpulse.pulse(this.health / this.definition.maxHealth);
+        this.healthImpulse.pulse(this.health / this.prefab.stats.maxHealth);
     }
 
 
@@ -237,7 +286,7 @@ export default class Entity implements EntityEvent {
 
     public getHtml(): HTMLElement {
         return jsml.div({ class: 'entity' }, [
-            jsml.h3({ class: 'name' }, this.definition.name),
+            jsml.h3({ class: 'name' }, this.prefab.name),
             this.healthBar,
             this.spellPreview
         ]);

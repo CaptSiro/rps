@@ -1,4 +1,4 @@
-import { Opt } from "./../types.ts";
+import { Opt } from "./../../types.ts";
 import jsml, { _, Icon } from "./../jsml/jsml.ts";
 import { $, is } from "./../std.ts";
 

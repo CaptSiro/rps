@@ -1,23 +1,33 @@
 import { playerChooseNewSpell, playerChooseSpell } from "../core";
-import Entity, { EntityDefinition } from "./Entity";
+import Entity, { EntityPrefab } from "./Entity";
 import Rock, { prefab_rock } from "../spells/Rock.ts";
 import Paper, { prefab_paper } from "../spells/Paper.ts";
 import Scissors, { prefab_scissors } from "../spells/Scissors.ts";
 import jsml from "../../lib/jsml/jsml.ts";
 import Spell from "../spells/Spell.ts";
+import Slingshot, { prefab_slingshot } from "../spells/Slingshot.ts";
 
 
 
-export const prefab_player: EntityDefinition = {
+export const prefab_player: EntityPrefab = {
     name: "Player",
-    maxHealth: 100,
-    strength: 20,
-    toughness: 10,
-    speed: 1
+    stats: {
+        maxHealth: 100,
+        strength: 10,
+        toughness: 10,
+        intelligence: 10,
+        dexterity: 10,
+        luck: 10,
+        speed: 1
+    },
 }
 
-export function prefab_playerSpells() {
+export function prefab_playerInitialSpells(): Spell[] {
     return [new Rock(prefab_rock), new Paper(prefab_paper), new Scissors(prefab_scissors)];
+}
+
+export function prefab_playerDeck(): Spell[] {
+    return [new Rock(prefab_rock), new Paper(prefab_paper), new Scissors(prefab_scissors), new Slingshot(prefab_slingshot)];
 }
 
 export default class Player extends Entity {
@@ -33,7 +43,7 @@ export default class Player extends Entity {
 
     getHtml() {
         return jsml.div({ class: 'entity player' }, [
-            jsml.h3({ class: 'name' }, this.definition.name),
+            jsml.h3({ class: 'name' }, this.prefab.name),
             this.healthBar,
             this.spellPreview
         ]);

@@ -1,33 +1,27 @@
 import Spell, { SpellPrefab } from "./Spell";
 import { showInfo } from "../core";
-import { Opt } from "../../lib/types.ts";
 import Entity from "../entities/Entity.ts";
-import Effect from "../effects/Effect.ts";
-import { prefab_healer } from "./types/Healer";
+import { prefab_caster } from "./class/Caster.ts";
+import { is } from "../../lib/std.ts";
 
 
 
 export const prefab_paper: SpellPrefab = {
     title: 'Paper',
     description: 'Heals caster, removes one harmful effect, and disables opponent\'s spell for 1 round',
-    type: prefab_healer,
+    type: prefab_caster,
 };
 
 export default class Paper extends Spell {
     async perform(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
-        // todo
-        //  - strength -> healPower
-        caster.heal(caster.getDefinition().strength);
+        caster.heal(caster.getStats().intelligence * 2);
 
-        let effect: Opt<Effect> = undefined;
-        const effects = caster.getEffects();
-        for (let i = 0; i < effects.length; i++) {
-            if (effects[i].isHarmful()) {
-                effect = effects[i];
-                effects.splice(i, 1);
-                break;
-            }
+        const [effect, index] = caster.findEffect(effect => effect.isHarmful());
+        if (!is(effect)) {
+            return;
         }
+
+        caster.getEffects().splice(index, 1);
 
         await showInfo([
             caster.getName() + ' healed'

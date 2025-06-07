@@ -1,6 +1,5 @@
 import jsml, { _ } from "../lib/jsml/jsml.ts";
-import { $, $$, assert, is, wait } from "../lib/std.ts";
-import { Opt } from "../lib/types.ts";
+import { $, $$, assert, wait } from "../lib/std.ts";
 import Spell from "./spells/Spell.ts";
 
 
@@ -15,6 +14,10 @@ const screens = $$('[data-screen]');
 const infoScreen = assert($('.info'));
 
 
+
+export function instantiate<T>(prefab: T): T {
+    return JSON.parse(JSON.stringify(prefab));
+}
 
 export function showScreen(screen: string): void {
     for (const s of screens) {
