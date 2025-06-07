@@ -8,7 +8,7 @@ import { prefab_brawler } from "./class/Brawler";
 export const prefab_rock: SpellPrefab = {
     title: 'Rock',
     description: 'Deal heavy blow. The damage is bigger the lower the enemy\'s health is.',
-    type: prefab_brawler,
+    class: prefab_brawler,
 };
 
 export default class Rock extends Spell {

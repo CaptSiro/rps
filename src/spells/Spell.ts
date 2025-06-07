@@ -8,7 +8,7 @@ import SpellClass, { Outcome, ClassPrefab } from "./class/SpellClass.ts";
 export type SpellPrefab = {
     title: string,
     description: string,
-    type: ClassPrefab,
+    class: ClassPrefab,
 
     disabled?: number,
     uses?: number
@@ -22,7 +22,7 @@ export default class Spell {
     protected readonly state: Impulse<Spell>;
     protected readonly uses: number;
 
-    protected type: SpellClass;
+    protected class: SpellClass;
     protected disabled: number;
     protected usesLeft: number;
 
@@ -31,7 +31,7 @@ export default class Spell {
     public constructor(
         protected prefab: SpellPrefab
     ) {
-        this.type = new SpellClass(prefab.type);
+        this.class = new SpellClass(prefab.class);
         this.disabled = prefab.disabled ?? 0;
 
         this.uses = prefab.uses ?? 1;
@@ -53,7 +53,7 @@ export default class Spell {
         return !this.isDisabled() && this.usesLeft > 0;
     }
 
-    public getDefinition(): SpellPrefab {
+    public getPrefab(): SpellPrefab {
         return this.prefab;
     }
 
@@ -90,7 +90,7 @@ export default class Spell {
     }
 
     public compare(other: Spell): Outcome {
-        return this.type.compare(other.type);
+        return this.class.compare(other.class);
     }
 
     public getHtml(): HTMLElement {
@@ -101,7 +101,7 @@ export default class Spell {
             cssClass = 'not-available';
         }
 
-        const backgroundColor = this.type.getColor().toString();
+        const backgroundColor = this.class.getColor().toString();
         return div({ class: "overlay-container " + cssClass, style: { backgroundColor } }, [
             div({ class: 'disabled-overlay' },
                 div({ class: 'circle' }, span(_, String(this.disabled)))

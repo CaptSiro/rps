@@ -7,7 +7,7 @@ import { prefab_undefinedClass } from "./class/Undefined.ts";
 export const prefab_none: SpellPrefab = {
     title: 'Empty',
     description: 'This spell is played when player or opponent don\'t have a valid spell to play',
-    type: prefab_undefinedClass,
+    class: prefab_undefinedClass,
 };
 
 export default class None extends Spell {

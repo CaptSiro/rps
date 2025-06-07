@@ -9,7 +9,7 @@ import { prefab_assassin } from "./class/Assassin";
 export const prefab_scissors: SpellPrefab = {
     title: 'Scissors',
     description: 'Cut opponent for small amount of damage and add one stack of bleeding.',
-    type: prefab_assassin
+    class: prefab_assassin
 };
 
 export default class Scissors extends Spell {

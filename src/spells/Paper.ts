@@ -9,7 +9,7 @@ import { is } from "../../lib/std.ts";
 export const prefab_paper: SpellPrefab = {
     title: 'Paper',
     description: 'Heals caster, removes one harmful effect, and disables opponent\'s spell for 1 round',
-    type: prefab_caster,
+    class: prefab_caster,
 };
 
 export default class Paper extends Spell {

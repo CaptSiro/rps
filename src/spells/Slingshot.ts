@@ -8,7 +8,7 @@ import { prefab_ranger } from "./class/Ranger.ts";
 export const prefab_slingshot: SpellPrefab = {
     title: "Slingshot",
     description: "Caster fires a small bullet at target dealing large amount of damage",
-    type: prefab_ranger,
+    class: prefab_ranger,
 }
 
 export default class Slingshot extends Spell {
