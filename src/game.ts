@@ -54,28 +54,14 @@ async function startBattle(player: Entity, enemy: Entity): Promise<void> {
             await showInfo(['No one wins, nothing happens.']);
         }
 
-        if (playerOutcome === WIN) {
-            await showInfo([player.getPrefab().name + ' wins the round.']);
-            await ps.perform(player, enemy, es);
-            if (!Entity.areAlive(entities)) {
-                break;
-            }
+        await ps.perform(playerOutcome, player, enemy, es);
+        if (!Entity.areAlive(entities)) {
+            break;
         }
 
-        if (enemyOutcome === WIN) {
-            await showInfo([enemy.getPrefab().name + ' wins the round.']);
-            await es.perform(enemy, player, ps);
-            if (!Entity.areAlive(entities)) {
-                break;
-            }
-        }
-
-        if (playerOutcome !== LOSS) {
-            ps.use();
-        }
-
-        if (enemyOutcome !== LOSS) {
-            es.use();
+        await es.perform(enemyOutcome, enemy, player, ps);
+        if (!Entity.areAlive(entities)) {
+            break;
         }
 
         await player.onEvent(GAME_EVENT_ROUND_END);

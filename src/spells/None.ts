@@ -1,6 +1,7 @@
 import Spell, { SpellPrefab } from "./Spell";
 import Entity from "../entities/Entity.ts";
-import { prefab_undefinedClass } from "./class/Undefined.ts";
+import { prefab_undefinedClass } from "./class/prefabs.ts";
+import { Outcome } from "./class/SpellClass.ts";
 
 
 
@@ -15,7 +16,7 @@ export default class None extends Spell {
         super(prefab_none);
     }
 
-    async perform(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
+    async perform(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         throw new Error("None spell should never be able to perform its action");
     }
 }

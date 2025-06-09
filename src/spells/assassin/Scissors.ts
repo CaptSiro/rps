@@ -1,8 +1,8 @@
-import Spell, { SpellPrefab } from "./Spell";
-import { instantiate, showInfo } from "../core";
-import Entity from "../entities/Entity.ts";
-import DamageOnEvent, { prefab_bleeding } from "../effects/DamageOnEvent.ts";
-import { prefab_assassin } from "./class/Assassin";
+import Spell, { SpellPrefab } from "../Spell.ts";
+import { instantiate, showInfo } from "../../core.ts";
+import Entity from "../../entities/Entity.ts";
+import DamageOnEvent, { prefab_bleeding } from "../../effects/DamageOnEvent.ts";
+import { prefab_assassin } from "../class/prefabs.ts";
 
 
 
@@ -13,7 +13,7 @@ export const prefab_scissors: SpellPrefab = {
 };
 
 export default class Scissors extends Spell {
-    async perform(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
+    async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         const stats = caster.getStats();
         await showInfo([caster.getName() + ' cut ' + target.getName()]);
         await target.takeDamage(stats.strength);

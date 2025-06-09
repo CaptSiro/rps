@@ -1,7 +1,7 @@
-import { showInfo } from "../core";
-import Entity from "../entities/Entity.ts";
-import Spell, { SpellPrefab } from "./Spell";
-import { prefab_brawler } from "./class/Brawler";
+import { showInfo } from "../../core.ts";
+import Entity from "../../entities/Entity.ts";
+import Spell, { SpellPrefab } from "../Spell.ts";
+import { prefab_brawler } from "../class/prefabs.ts";
 
 
 
@@ -12,7 +12,7 @@ export const prefab_rock: SpellPrefab = {
 };
 
 export default class Rock extends Spell {
-    async perform(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
+    async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         await showInfo([caster.getName() + ' hit ' + target.getName()]);
         await target.takeDamage(caster.getStats().strength * 2 + target.getMissingHealth() * 0.05);
     }

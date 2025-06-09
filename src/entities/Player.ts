@@ -1,11 +1,11 @@
 import { playerChooseNewSpell, playerChooseSpell } from "../core";
 import Entity, { EntityPrefab } from "./Entity";
-import Rock, { prefab_rock } from "../spells/Rock.ts";
-import Paper, { prefab_paper } from "../spells/Paper.ts";
-import Scissors, { prefab_scissors } from "../spells/Scissors.ts";
+import Rock, { prefab_rock } from "../spells/brawler/Rock.ts";
+import Paper, { prefab_paper } from "../spells/cleric/Paper.ts";
+import Scissors, { prefab_scissors } from "../spells/assassin/Scissors.ts";
 import jsml from "../../lib/jsml/jsml.ts";
 import Spell from "../spells/Spell.ts";
-import Slingshot, { prefab_slingshot } from "../spells/Slingshot.ts";
+import Slingshot, { prefab_slingshot } from "../spells/ranger/Slingshot.ts";
 
 
 

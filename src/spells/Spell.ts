@@ -1,7 +1,8 @@
 import jsml, { _ } from "../../lib/jsml/jsml";
 import Impulse from "../../lib/Impulse";
 import Entity from "../entities/Entity.ts";
-import SpellClass, { Outcome, ClassPrefab } from "./class/SpellClass.ts";
+import SpellClass, { Outcome, ClassPrefab, WIN, LOSS } from "./class/SpellClass.ts";
+import { showInfo } from "../core.ts";
 
 
 
@@ -85,9 +86,18 @@ export default class Spell {
         this.state.pulse(this);
     }
 
-    public async perform(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
-        throw new Error('Spell is not implemented');
+    public async perform(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
+        if (outcome === WIN) {
+            await showInfo([caster.getPrefab().name + ' wins the round.']);
+            await this.action(caster, target, targetSpell);
+        }
+
+        if (outcome !== LOSS) {
+            this.use();
+        }
     }
+
+    public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {}
 
     public compare(other: Spell): Outcome {
         return this.class.compare(other.class);
