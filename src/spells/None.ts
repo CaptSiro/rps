@@ -6,7 +6,7 @@ import { Outcome } from "./class/SpellClass.ts";
 
 
 export const prefab_none: SpellPrefab = {
-    title: 'Empty',
+    name: 'Empty',
     description: 'This spell is played when player or opponent don\'t have a valid spell to play',
     class: prefab_undefinedClass,
 };

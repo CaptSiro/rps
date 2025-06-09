@@ -1,6 +1,6 @@
 import jsml, { _ } from "../lib/jsml/jsml.ts";
 import { $, $$, assert, wait } from "../lib/std.ts";
-import Spell from "./spells/Spell.ts";
+import Spell, { SpellPrefab } from "./spells/Spell.ts";
 
 
 
@@ -22,6 +22,10 @@ const infoScreen = assert($('.info'));
 
 export function instantiate<T>(prefab: T): T {
     return JSON.parse(JSON.stringify(prefab));
+}
+
+export function power(prefab: SpellPrefab, or: number): number {
+    return prefab.power ?? or;
 }
 
 export function showScreen(screen: string): void {

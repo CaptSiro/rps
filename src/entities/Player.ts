@@ -18,7 +18,7 @@ export const prefab_player: EntityPrefab = {
         intelligence: 10,
         dexterity: 10,
         luck: 10,
-        speed: 1
+        evasiveness: 0
     },
 }
 

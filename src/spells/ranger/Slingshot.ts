@@ -1,20 +1,38 @@
 import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
-import { showInfo } from "../../core.ts";
+import { power, showInfo } from "../../core.ts";
 import { prefab_ranger } from "../class/prefabs.ts";
+import Damage, { DamageType } from "../../health/Damage.ts";
+import { randomInt } from "../../../lib/std.ts";
 
 
 
 export const prefab_slingshot: SpellPrefab = {
-    title: "Slingshot",
-    description: "Caster fires a small bullet at target dealing large amount of damage",
+    name: "Slingshot",
+    description: "Caster fires a small bullet at target dealing random amount of damage",
     class: prefab_ranger,
+    power: 20
 }
 
 export default class Slingshot extends Spell {
-    async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
+    protected chooseBullet(): [string, number] {
+        const bullets: [string, number][] = [
+            ["pebble", 1],
+            ["iron ball", 1.25]
+        ];
+
+        return bullets[randomInt(0, bullets.length)];
+    }
+
+    public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         const stats = caster.getStats();
-        await target.takeDamage(stats.dexterity * 2 + target.getCurrentHealth() * 0.05);
-        await showInfo([caster.getName() + " has landed the shot"]);
+        const [bullet, multiplier] = this.chooseBullet();
+
+        await showInfo([`${caster} has shot ${bullet} at ${target}`]);
+        await caster.dealDamage(target, new Damage(
+            DamageType.PHYSICAL,
+            stats.dexterity,
+            power(this.prefab, 20) * multiplier
+        ));
     }
 }

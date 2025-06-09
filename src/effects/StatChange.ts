@@ -3,18 +3,18 @@ import Entity, { EntityStats } from "../entities/Entity.ts";
 
 
 
-export type StatChangePrefab<S extends keyof EntityStats> = {
+export type StatChangePrefab = {
     name: string,
     lifespan: number,
-    stat: S,
-    calculateStat: (x: EntityStats[S]) => EntityStats[S],
+    stat: keyof EntityStats,
+    calculateStat: (x: number) => number,
 };
 
-export default class StatChange<S extends keyof EntityStats> extends Effect {
+export default class StatChange extends Effect {
     protected processed: number;
 
     public constructor(
-        protected prefab: StatChangePrefab<S>,
+        protected prefab: StatChangePrefab,
         caster: Entity,
         target: Entity
     ) {

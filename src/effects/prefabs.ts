@@ -3,6 +3,7 @@ import { DamageOnEventPrefab } from "./DamageOnEvent.ts";
 import { StatChangePrefab } from "./StatChange.ts";
 import { VenomPrefab } from "./Venom.ts";
 import { instantiate } from "../core.ts";
+import Damage, { DamageType } from "../health/Damage.ts";
 
 
 
@@ -10,19 +11,27 @@ export const prefab_bleeding: DamageOnEventPrefab = {
     name: 'Bleeding',
     event: GAME_EVENT_ROUND_END,
     lifespan: 5,
-    calculateDamage: (caster, target) => target.getMaxHealth() * 0.02,
+    createBaseDamage: (caster, target) => new Damage(
+        DamageType.TRUE,
+        target.getMaxHealth() * 0.02
+    ),
 };
 
 export function createBleedingPrefab(dexterity: number): DamageOnEventPrefab {
     const bleeding = instantiate(prefab_bleeding);
-    bleeding.calculateDamage = () => dexterity * 0.3;
+
+    bleeding.createBaseDamage = () => new Damage(
+        DamageType.TRUE,
+        dexterity * 0.3
+    );
+
     return bleeding;
 }
 
-export const prefab_sharpSpeedIncrease: StatChangePrefab<"speed"> = {
+export const prefab_sharpSpeedIncrease: StatChangePrefab = {
     name: "Sharp speed increase",
     lifespan: 3,
-    stat: "speed",
+    stat: "evasiveness",
     calculateStat: (speed) => speed + 0.5,
 }
 

@@ -1,6 +1,8 @@
 import Entity, { EntityStats } from "../entities/Entity.ts";
 import Spell from "../spells/Spell.ts";
 import { Prefab } from "../core.ts";
+import Damage from "../health/Damage.ts";
+import Heal from "../health/Heal.ts";
 
 
 
@@ -60,6 +62,14 @@ export default class Effect {
 
     public modifyStats(stats: EntityStats): EntityStats {
         return stats;
+    }
+
+    public modifyDamage(damage: Damage): Damage {
+        return damage;
+    }
+
+    public modifyHeal(heal: Heal): Heal {
+        return heal;
     }
 
     public async onBind(): Promise<void> {}

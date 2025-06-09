@@ -3,12 +3,14 @@ import Health from "../components/Health";
 import SpellPreview from "../components/SpellPreview";
 import Impulse from "../../lib/Impulse.ts";
 import Spell from "../spells/Spell.ts";
-import { Opt } from "../../types.ts";
+import { Opt, Predicate } from "../../types.ts";
 import None from "../spells/None.ts";
 import jsml from "../../lib/jsml/jsml.ts";
 import Effect from "../effects/Effect.ts";
-import { Predicate } from "../../types.ts";
 import Battle from "../Battle.ts";
+import Damage from "../health/Damage.ts";
+import { expFalloff } from "../../lib/std.ts";
+import Heal from "../health/Heal.ts";
 
 
 
@@ -19,7 +21,7 @@ export type EntityStats = {
     intelligence: number,
     dexterity: number,
     luck: number,
-    speed: number,
+    evasiveness: number,
 }
 
 export type EntityPrefab = {
@@ -37,7 +39,7 @@ export const prefab_billy: EntityPrefab = {
         dexterity: 6,
         intelligence: 5,
         luck: 10,
-        speed: 1,
+        evasiveness: 0,
     },
 };
 
@@ -203,38 +205,59 @@ export default class Entity {
         return [this.effects[index], index];
     }
 
-    async addEffect(effect: Effect): Promise<void> {
+    public async addEffect(effect: Effect): Promise<void> {
         this.effects.push(effect);
         await effect.onBind();
     }
 
 
 
-    public async takeDamage(value: number, evadeAble: boolean = true, reduceAble: boolean = true): Promise<void> {
-        if (isNaN(value)) {
+    public modifyDamage(damage: Damage): Damage {
+        return this.effects.reduce(
+            (d, x) => x.modifyDamage(d),
+            damage
+        );
+    }
+
+    public modifyHeal(heal: Heal): Heal {
+        return this.effects.reduce(
+            (h, x) => x.modifyHeal(h),
+            heal
+        );
+    }
+
+    public async dealDamage(target: Entity, damage: Damage): Promise<boolean> {
+        return await target.takeDamage(this, this.modifyDamage(damage));
+    }
+
+    protected async takeDamage(initiator: Entity, damage: Damage): Promise<boolean> {
+        if (isNaN(damage.getBase())) {
             throw new Error('Can not take NaN damage');
         }
 
-        const chance = Math.max(Math.min(this.prefab.stats.speed - 1, 1), 0);
-        if (Math.random() < chance && evadeAble) {
-            await showInfo([this.getName() + ' evaded the attack']);
-            return;
+        const stats = this.getStats();
+        if (damage.isAvoidable()) {
+            const chance = expFalloff(stats.evasiveness);
+            if (Math.random() < chance) {
+                await showInfo([initiator + ' missed']);
+                return false;
+            }
         }
 
-        const reduce = this.prefab.stats.toughness === 0 || !reduceAble
-            ? 1
-            : (1 - 1 / this.prefab.stats.toughness);
-        this.health -= value * reduce;
+        const resistance = stats.toughness / 50;
+        const absorption = Math.max(0, expFalloff(resistance));
+        this.health -= damage.getAmount(absorption);
 
         if (this.health < 0) {
             this.health = 0;
         }
 
         this.healthImpulse.pulse(this.health / this.prefab.stats.maxHealth);
+        return true;
     }
 
-    public heal(value: number): void {
-        this.health += value;
+    public heal(heal: Heal): void {
+        this.health += this.modifyHeal(heal).getAmount();
 
         if (this.health > this.prefab.stats.maxHealth) {
             this.health = this.prefab.stats.maxHealth;

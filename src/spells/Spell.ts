@@ -7,9 +7,10 @@ import { showInfo } from "../core.ts";
 
 
 export type SpellPrefab = {
-    title: string,
+    name: string,
     description: string,
     class: ClassPrefab,
+    power?: number,
 
     disabled?: number,
     uses?: number
@@ -59,7 +60,7 @@ export default class Spell {
     }
 
     public getName(): string {
-        return this.prefab.title;
+        return this.prefab.name;
     }
 
     public getState(): Impulse<Spell> {
@@ -129,7 +130,7 @@ export default class Spell {
             div({ class: 'not-available-overlay' },
                 div({ class: 'circle' }, span(_, 'X'))
             ),
-            div({ class: 'title' }, this.prefab.title),
+            div({ class: 'title' }, this.prefab.name),
             div({ class: 'description' }, this.prefab.description),
         ]);
     }

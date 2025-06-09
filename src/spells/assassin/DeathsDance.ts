@@ -8,7 +8,7 @@ import { prefab_assassin } from "../class/prefabs.ts";
 
 
 export const prefab_deathsDance: SpellPrefab = {
-    title: "Death's Dance",
+    name: "Death's Dance",
     description: "Sharply increases evasion for 3 rounds",
     class: prefab_assassin,
 };

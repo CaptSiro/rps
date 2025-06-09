@@ -1,6 +1,7 @@
 import Effect from "./Effect";
 import { showInfo } from "../core";
 import Entity from "../entities/Entity.ts";
+import Damage from "../health/Damage.ts";
 
 
 
@@ -8,7 +9,7 @@ export type DamageOnEventPrefab = {
     name: string,
     event: string,
     lifespan: number,
-    calculateDamage: (caster: Entity, target: Entity) => number;
+    createBaseDamage: (caster: Entity, target: Entity) => Damage;
     reduceAble?: boolean,
 }
 
@@ -37,7 +38,10 @@ export default class DamageOnEvent extends Effect {
 
     public async proc(): Promise<void> {
         await showInfo([this.target.getName() + ' is affected by ' + this.name]);
-        await this.target.takeDamage(this.prefab.calculateDamage(this.caster, this.target), false, this.prefab.reduceAble ?? false);
+        await this.caster.dealDamage(
+            this.target,
+            this.prefab.createBaseDamage(this.caster, this.target)
+        );
     }
 
 
