@@ -6,9 +6,9 @@ import Spell from "../spells/Spell.ts";
 import { Opt } from "../../types.ts";
 import None from "../spells/None.ts";
 import jsml from "../../lib/jsml/jsml.ts";
-import EntityEvent, { EntityEvent_onEvent } from "./EntityEvent.ts";
 import Effect from "../effects/Effect.ts";
 import { Predicate } from "../../types.ts";
+import Battle from "../Battle.ts";
 
 
 
@@ -41,7 +41,7 @@ export const prefab_billy: EntityPrefab = {
     },
 };
 
-export default class Entity implements EntityEvent {
+export default class Entity {
     public static areAlive(entities: Entity[]) {
         for (const entity of entities) {
             if (!entity.isAlive()) {
@@ -53,6 +53,8 @@ export default class Entity implements EntityEvent {
     }
 
 
+
+    protected battle: Battle | any;
 
     protected health: number;
     protected readonly healthImpulse: Impulse<number>;
@@ -236,10 +238,10 @@ export default class Entity implements EntityEvent {
 
 
 
-    protected async propagateEventToEffects(event: string): Promise<void> {
+    protected async propagateEventToEffects(propagate: (x: Effect) => Promise<void>): Promise<void> {
         for (let i = 0; i < this.effects.length; i++) {
             const effect = this.effects[i];
-            await effect.onEvent(event);
+            await propagate(effect);
 
             if (!Entity.areAlive([effect.getCaster(), effect.getTarget()])) {
                 break;
@@ -255,13 +257,23 @@ export default class Entity implements EntityEvent {
         }
     }
 
+    public async onBattleStart(battle: Battle): Promise<void> {
+        await this.propagateEventToEffects(x => x.onBattleStart());
+
+        this.battle = battle;
+    }
+
     public async onRoundStart(): Promise<void> {
+        await this.propagateEventToEffects(x => x.onRoundStart());
+
         for (const spell of this.spells) {
             spell.disable(-1, false);
         }
     }
 
-    public async onRoundEnd(): Promise<void> {}
+    public async onRoundEnd(): Promise<void> {
+        await this.propagateEventToEffects(x => x.onRoundEnd());
+    }
 
     public async onDrawSpells(spells: Spell[]): Promise<void> {
         this.addSpell(
@@ -271,15 +283,6 @@ export default class Entity implements EntityEvent {
 
     public async onChooseSpell(): Promise<Spell> {
         return this.getRandomAvailableSpell();
-    }
-
-    public async onEvent(event: string): Promise<void> {
-        return new Promise(resolve => {
-            Promise.all([
-                this.propagateEventToEffects(event),
-                EntityEvent_onEvent(event, this)
-            ]).then(() => resolve());
-        });
     }
 
 

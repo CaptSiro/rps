@@ -1,9 +1,8 @@
 import Entity from "../entities/Entity.ts";
-import GameEvent, { GAME_EVENT_ROUND_END, GAME_EVENT_ROUND_START, GameEvent_onEvent } from "../GameEvent.ts";
 
 
 
-export default abstract class Effect implements GameEvent {
+export default abstract class Effect {
     protected constructor(
         protected caster: Entity,
         protected target: Entity,
@@ -44,11 +43,9 @@ export default abstract class Effect implements GameEvent {
 
     public abstract onBind(): Promise<void>;
 
-    public abstract onRoundEnd(): Promise<void>;
+    public abstract onBattleStart(): Promise<void>;
 
     public abstract onRoundStart(): Promise<void>;
 
-    public async onEvent(event: string): Promise<void> {
-        await GameEvent_onEvent(event, this);
-    }
+    public abstract onRoundEnd(): Promise<void>;
 }
