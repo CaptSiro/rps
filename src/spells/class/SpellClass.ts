@@ -9,7 +9,7 @@ export type ClassPrefab = {
     color: Color,
     loosing: ClassIdentifier[],
     winning: ClassIdentifier[]
-}
+};
 
 export type Loss = -1;
 export type Draw = 0;

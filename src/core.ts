@@ -4,6 +4,11 @@ import Spell from "./spells/Spell.ts";
 
 
 
+export type Prefab = {
+    name: string
+};
+
+
 const { div } = jsml;
 
 export const SCREEN_SPELLS = 'spells';

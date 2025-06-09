@@ -1,5 +1,4 @@
 import Entity from "./entities/Entity.ts";
-import { DRAW } from "./spells/class/SpellClass.ts";
 import { showInfo } from "./core.ts";
 
 

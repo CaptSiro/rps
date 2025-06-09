@@ -1,5 +1,6 @@
 import Entity, { EntityStats } from "../entities/Entity.ts";
 import Spell from "../spells/Spell.ts";
+import { Prefab } from "../core.ts";
 
 
 
@@ -29,6 +30,14 @@ export default class Effect {
         return this.target;
     }
 
+    public getLifespan(): number {
+        return this.lifespan;
+    }
+
+    public setLifespan(lifespan: number): void {
+        this.lifespan = lifespan;
+    }
+
     public doRemove(): boolean {
         return this.round >= this.lifespan;
     }
@@ -39,6 +48,10 @@ export default class Effect {
 
     public getName(): string {
         return this.name;
+    }
+
+    public is(prefab: Prefab): boolean {
+        return this.name === prefab.name;
     }
 
 
