@@ -48,7 +48,8 @@ export default class Battle {
             const aOutcome = aSpell.compare(bSpell);
             const bOutcome = bSpell.compare(aSpell);
 
-            if (aOutcome === DRAW && bOutcome === DRAW) {
+            const noOnePerformsSpell = !aSpell.performPolicy(aOutcome, a, b, bSpell) && !bSpell.performPolicy(bOutcome, b, a, aSpell);
+            if (noOnePerformsSpell) {
                 await showInfo(['No one wins, nothing happens.']);
             } else {
                 await aSpell.perform(aOutcome, a, b, bSpell);

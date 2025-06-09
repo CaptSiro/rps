@@ -16,7 +16,7 @@ export const prefab_scissors: SpellPrefab = {
 export default class Scissors extends Spell {
     public createBleedingPrefab(dexterity: number) {
         const bleeding = instantiate(prefab_bleeding);
-        bleeding.calculateDamage = (caster, target) => dexterity * 0.3;
+        bleeding.calculateDamage = () => dexterity * 0.3;
         return bleeding;
     }
 

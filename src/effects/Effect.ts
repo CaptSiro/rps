@@ -1,4 +1,5 @@
 import Entity, { EntityStats } from "../entities/Entity.ts";
+import Spell from "../spells/Spell.ts";
 
 
 
@@ -53,6 +54,10 @@ export default class Effect {
     public async onBattleStart(): Promise<void> {}
 
     public async onRoundStart(): Promise<void> {}
+
+    public async onSpellPerform(spell: Spell): Promise<boolean> {
+        return true;
+    }
 
     public async onRoundEnd(): Promise<void> {
         this.round++;

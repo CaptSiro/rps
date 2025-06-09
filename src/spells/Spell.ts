@@ -86,13 +86,23 @@ export default class Spell {
         this.state.pulse(this);
     }
 
+    public performPolicy(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): boolean {
+        return outcome === WIN;
+    }
+
+    public usePolicy(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): boolean {
+        return outcome === LOSS;
+    }
+
     public async perform(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
-        if (outcome === WIN) {
-            await showInfo([caster.getPrefab().name + ' wins the round.']);
-            await this.action(caster, target, targetSpell);
+        if (this.performPolicy(outcome, caster, target, targetSpell)) {
+            if (await caster.onSpellPerform(this)) {
+                await showInfo([caster.getPrefab().name + ' wins the round.']);
+                await this.action(caster, target, targetSpell);
+            }
         }
 
-        if (outcome !== LOSS) {
+        if (this.usePolicy(outcome, caster, target, targetSpell)) {
             this.use();
         }
     }

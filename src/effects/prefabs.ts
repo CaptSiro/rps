@@ -1,6 +1,7 @@
 import { GAME_EVENT_ROUND_END } from "../GameEvent.ts";
 import { DamageOnEventPrefab } from "./DamageOnEvent.ts";
 import { StatChangePrefab } from "./StatChange.ts";
+import { VenomPrefab } from "./Venom.ts";
 
 
 
@@ -16,4 +17,10 @@ export const prefab_sharpSpeedIncrease: StatChangePrefab<"speed"> = {
     lifespan: 3,
     stat: "speed",
     calculateStat: (speed) => speed + 0.5,
+}
+
+export const prefab_venom: VenomPrefab = {
+    name: "Venom",
+    lifespan: Number.POSITIVE_INFINITY,
+    paralyzeChance: 0.1,
 }

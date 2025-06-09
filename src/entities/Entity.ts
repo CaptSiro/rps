@@ -84,6 +84,10 @@ export default class Entity {
         this.effects = [];
     }
 
+    public toString(): string {
+        return this.getName();
+    }
+
 
 
     public isAlive(): boolean {
@@ -272,6 +276,16 @@ export default class Entity {
         for (const spell of this.spells) {
             spell.disable(-1, false);
         }
+    }
+
+    public async onSpellPerform(spell: Spell): Promise<boolean> {
+        for (const effect of this.effects) {
+            if (!await effect.onSpellPerform(spell)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public async onRoundEnd(): Promise<void> {
