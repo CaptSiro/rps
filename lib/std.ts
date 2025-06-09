@@ -70,6 +70,14 @@ export function lerp(a: number, b: number, t: number): number {
     return a + (b - a) * t;
 }
 
+/**
+ * If x >= 0 then y is in <0;1) where for example f(0.5) ~ 0.5; f(1) ~ 0.75;
+ * @param x
+ */
+export function expFalloff(x: number): number {
+    return 1 - Math.exp(- (1 / 2) * Math.E * x);
+}
+
 export function wait(ms: number): Promise<void> {
     return new Promise(
         resolve => setTimeout(resolve, ms)

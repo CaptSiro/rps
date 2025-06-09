@@ -1,4 +1,4 @@
-import { showInfo } from "../core";
+import { instantiate, showInfo } from "../core";
 import Health from "../components/Health";
 import SpellPreview from "../components/SpellPreview";
 import Impulse from "../../lib/Impulse.ts";
@@ -95,7 +95,10 @@ export default class Entity {
     }
 
     public getStats(): EntityStats {
-        return this.prefab.stats;
+        return this.effects.reduce(
+            (stats, x) => x.modifyStats(stats),
+            instantiate(this.prefab.stats)
+        );
     }
 
     public getMissingHealth(): number {
@@ -107,7 +110,7 @@ export default class Entity {
     }
 
     public getMaxHealth(): number {
-        return this.prefab.stats.maxHealth;
+        return this.getStats().maxHealth;
     }
 
     public getName(): string {

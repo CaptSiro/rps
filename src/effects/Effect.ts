@@ -1,13 +1,18 @@
-import Entity from "../entities/Entity.ts";
+import Entity, { EntityStats } from "../entities/Entity.ts";
 
 
 
-export default abstract class Effect {
+export default class Effect {
+    protected round: number;
+
     protected constructor(
         protected caster: Entity,
         protected target: Entity,
-        protected name: string
-    ) {}
+        protected name: string,
+        protected lifespan: number = Number.POSITIVE_INFINITY
+    ) {
+        this.round = 0;
+    }
 
 
 
@@ -24,7 +29,7 @@ export default abstract class Effect {
     }
 
     public doRemove(): boolean {
-        return false;
+        return this.round >= this.lifespan;
     }
 
     public getRemovedMessage(): string {
@@ -39,13 +44,17 @@ export default abstract class Effect {
 
     public async proc(): Promise<void> {}
 
+    public modifyStats(stats: EntityStats): EntityStats {
+        return stats;
+    }
 
+    public async onBind(): Promise<void> {}
 
-    public abstract onBind(): Promise<void>;
+    public async onBattleStart(): Promise<void> {}
 
-    public abstract onBattleStart(): Promise<void>;
+    public async onRoundStart(): Promise<void> {}
 
-    public abstract onRoundStart(): Promise<void>;
-
-    public abstract onRoundEnd(): Promise<void>;
+    public async onRoundEnd(): Promise<void> {
+        this.round++;
+    }
 }
