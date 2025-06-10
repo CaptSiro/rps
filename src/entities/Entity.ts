@@ -207,7 +207,7 @@ export default class Entity {
     }
 
     public async addEffect(effect: Effect): Promise<boolean> {
-        if (this.modifyAddedEffect(effect) === Immunity.IMMUNE) {
+        if (await this.modifyAddedEffect(effect) === Immunity.IMMUNE) {
             await showInfo([this + " is immune to " + effect]);
             return false;
         }
@@ -234,9 +234,9 @@ export default class Entity {
         );
     }
 
-    public modifyDamageTaken(damage: Damage): Immunity {
+    public async modifyDamageTaken(damage: Damage): Promise<Immunity> {
         for (const effect of this.effects) {
-            if (effect.onTakenDamage(damage) === Immunity.IMMUNE) {
+            if (await effect.onTakenDamage(damage) === Immunity.IMMUNE) {
                 return Immunity.IMMUNE;
             }
         }
@@ -251,9 +251,9 @@ export default class Entity {
         );
     }
 
-    public modifyAddedEffect(effect: Effect): Immunity {
+    public async modifyAddedEffect(effect: Effect): Promise<Immunity> {
         for (const effect of this.effects) {
-            if (effect.onEffectAdded(effect) === Immunity.IMMUNE) {
+            if (await effect.onEffectAdded(effect) === Immunity.IMMUNE) {
                 return Immunity.IMMUNE;
             }
         }
@@ -262,6 +262,8 @@ export default class Entity {
     }
 
     public async dealDamage(target: Entity, damage: Damage): Promise<boolean> {
+        damage.setInitiator(this);
+        damage.setTarget(target);
         return await target.takeDamage(this, this.modifyDamage(damage));
     }
 
@@ -270,7 +272,7 @@ export default class Entity {
             throw new Error('Can not take NaN damage');
         }
 
-        if (this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
+        if (await this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
             await showInfo([this + " is immune"]);
             return false;
         }

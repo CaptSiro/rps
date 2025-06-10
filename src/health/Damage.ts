@@ -1,3 +1,7 @@
+import Entity from "../entities/Entity.ts";
+
+
+
 export enum DamageType {
     TRUE,
     PHYSICAL,
@@ -5,6 +9,9 @@ export enum DamageType {
 }
 
 export default class Damage {
+    protected initiator: Entity | any;
+    protected target: Entity | any;
+
     public constructor(
         protected type: DamageType,
         protected base: number,
@@ -15,6 +22,22 @@ export default class Damage {
 
     public isAvoidable(): boolean {
         return this.type === DamageType.PHYSICAL;
+    }
+
+    public getInitiator(): Entity {
+        return this.initiator;
+    }
+
+    public setInitiator(initiator: Entity): void {
+        this.initiator = initiator;
+    }
+
+    public getTarget(): Entity {
+        return this.target;
+    }
+
+    public setTarget(target: Entity): void {
+        this.target = target;
     }
 
     public getType(): DamageType {

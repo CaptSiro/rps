@@ -5,6 +5,7 @@ import { VenomPrefab } from "./Venom.ts";
 import { instantiate } from "../core.ts";
 import Damage, { DamageType } from "../health/Damage.ts";
 import { EffectPrefab } from "./Effect.ts";
+import { VenomCloakEffectPrefab } from "./VenomCloakEffect.ts";
 
 
 
@@ -45,4 +46,10 @@ export const prefab_venom: VenomPrefab = {
 export const prefab_shadowRealmEffect: EffectPrefab = {
     name: "Shadow Realm",
     lifespan: 1
+}
+
+export const prefab_venomCloakEffect: VenomCloakEffectPrefab = {
+    name: "Venom Cloak",
+    lifespan: Number.POSITIVE_INFINITY,
+    venomDoses: 3,
 }

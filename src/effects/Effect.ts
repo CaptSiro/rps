@@ -83,11 +83,11 @@ export default class Effect {
         return heal;
     }
 
-    public onTakenDamage(damage: Damage): Immunity {
+    public async onTakenDamage(damage: Damage): Promise<Immunity> {
         return Immunity.NOT_IMMUNE;
     }
 
-    public onEffectAdded(effect: Effect): Immunity {
+    public async onEffectAdded(effect: Effect): Promise<Immunity> {
         return Immunity.NOT_IMMUNE;
     }
 
