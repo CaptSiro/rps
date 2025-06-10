@@ -4,20 +4,22 @@ import { Prefab } from "../core.ts";
 import Damage from "../health/Damage.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
+import { EffectType } from "./EffectType.ts";
 
 
 
 export type EffectPrefab = {
     name: string,
+    type: EffectType,
     lifespan?: number,
-}
+};
 
-export default class Effect {
+export default class Effect<T extends EffectPrefab = EffectPrefab> {
     protected round: number;
     protected lifespan: number;
 
-    protected constructor(
-        protected prefab: EffectPrefab,
+    public constructor(
+        protected prefab: T,
         protected caster: Entity,
         protected target: Entity,
     ) {
@@ -31,12 +33,16 @@ export default class Effect {
 
 
 
+    public getPrefab(): T {
+        return this.prefab;
+    }
+
     public getName(): string {
         return this.prefab.name;
     }
 
-    public isHarmful(): boolean {
-        return false;
+    public getType(): EffectType {
+        return this.prefab.type;
     }
 
     public getCaster(): Entity {

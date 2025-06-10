@@ -21,7 +21,15 @@ const infoScreen = assert($('.info'));
 
 
 export function instantiate<T>(prefab: T): T {
-    return JSON.parse(JSON.stringify(prefab));
+    const instance: T = JSON.parse(JSON.stringify(prefab));
+
+    for (const key in prefab) {
+        if (typeof prefab[key] === "function") {
+            instance[key] = prefab[key];
+        }
+    }
+
+    return instance;
 }
 
 export function power(prefab: SpellPrefab, or: number): number {

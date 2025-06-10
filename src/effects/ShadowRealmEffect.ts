@@ -1,26 +1,15 @@
-import Effect, { EffectPrefab } from "./Effect.ts";
+import Effect from "./Effect.ts";
 import Damage from "../health/Damage.ts";
 import { Immunity } from "../Immunity.ts";
-import Entity from "../entities/Entity.ts";
 
 
 
 export default class ShadowRealmEffect extends Effect {
-    public constructor(
-        protected prefab: EffectPrefab,
-        caster: Entity,
-        target: Entity
-    ) {
-        super(prefab, caster, target);
-    }
-
-
-
-    public onTakenDamage(damage: Damage): Immunity {
+    public async onTakenDamage(damage: Damage): Promise<Immunity> {
         return Immunity.IMMUNE;
     }
 
-    public onEffectAdded(effect: Effect): Immunity {
+    public async onEffectAdded(effect: Effect): Promise<Immunity> {
         return Immunity.IMMUNE;
     }
 }

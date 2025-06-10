@@ -1,20 +1,12 @@
-import Spell, { SpellPrefab } from "../Spell.ts";
+import Spell from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { power, showInfo } from "../../core.ts";
-import { createBleedingPrefab, prefab_bleeding } from "../../effects/prefabs.ts";
+import { createBleedingPrefab, prefab_bleeding } from "../../effects/effect_prefabs.ts";
 import { is } from "../../../lib/std.ts";
 import DamageOnEvent from "../../effects/DamageOnEvent.ts";
 import Damage, { DamageType } from "../../health/Damage.ts";
-import { prefab_assassin } from "../class/prefabs.ts";
 
 
-
-export const prefab_bloodBurst: SpellPrefab = {
-    name: "Blood Burst",
-    description: "Strike the target for moderate amount of damage. Add or replenish Bleeding effect for 5 rounds on target. If the target was bleeding before the strike, deal double the base damage",
-    class: prefab_assassin,
-    power: 40,
-};
 
 export default class BloodBurst extends Spell {
     public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {

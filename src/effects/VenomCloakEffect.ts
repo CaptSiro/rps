@@ -1,8 +1,8 @@
-import Effect from "./Effect.ts";
+import Effect, { EffectPrefab } from "./Effect.ts";
 import Damage, { DamageType } from "../health/Damage.ts";
 import { Immunity } from "../Immunity.ts";
 import { Venom } from "./Venom.ts";
-import { prefab_venom } from "./prefabs.ts";
+import { prefab_venom } from "./effect_prefabs.ts";
 import Entity from "../entities/Entity.ts";
 
 
@@ -11,18 +11,18 @@ export type VenomCloakEffectPrefab = {
     name: string,
     venomDoses: number,
     lifespan?: number,
-}
+} & EffectPrefab;
 
-export default class VenomCloakEffect extends Effect {
+export default class VenomCloakEffect extends Effect<VenomCloakEffectPrefab> {
     protected venomDosesLeft: number;
 
     constructor(
-        protected prefab: VenomCloakEffectPrefab,
+        prefab: VenomCloakEffectPrefab,
         caster: Entity,
         target: Entity,
     ) {
         super(prefab, caster, target);
-        this.venomDosesLeft = this.prefab.venomDoses;
+        this.venomDosesLeft = prefab.venomDoses;
     }
 
 

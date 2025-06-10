@@ -1,4 +1,4 @@
-import Effect from "./Effect";
+import Effect, { EffectPrefab } from "./Effect";
 import { showInfo } from "../core";
 import Entity from "../entities/Entity.ts";
 import Damage from "../health/Damage.ts";
@@ -6,32 +6,12 @@ import Damage from "../health/Damage.ts";
 
 
 export type DamageOnEventPrefab = {
-    name: string,
     event: string,
-    lifespan: number,
     createBaseDamage: (caster: Entity, target: Entity) => Damage;
     reduceAble?: boolean,
-}
+} & EffectPrefab;
 
-export default class DamageOnEvent extends Effect {
-    public constructor(
-        protected prefab: DamageOnEventPrefab,
-        caster: Entity,
-        target: Entity
-    ) {
-        super(prefab, caster, target);
-    }
-
-
-
-    public isHarmful(): boolean {
-        return true;
-    }
-
-    public getPrefab(): DamageOnEventPrefab {
-        return this.prefab;
-    }
-
+export default class DamageOnEvent extends Effect<DamageOnEventPrefab> {
     public getRemovedMessage(): string {
         return this.target + ' healed ' + this;
     }
@@ -43,8 +23,6 @@ export default class DamageOnEvent extends Effect {
             this.prefab.createBaseDamage(this.caster, this.target)
         );
     }
-
-
 
     public async onRoundEnd(): Promise<void> {
         await super.onRoundEnd();

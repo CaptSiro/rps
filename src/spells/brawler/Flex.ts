@@ -1,7 +1,7 @@
 import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { showInfo } from "../../core.ts";
-import { prefab_intimidated } from "../../effects/prefabs.ts";
+import { prefab_intimidated } from "../../effects/effect_prefabs.ts";
 import Intimidated from "../../effects/Intimidated.ts";
 import { prefab_brawler } from "../class/prefabs.ts";
 

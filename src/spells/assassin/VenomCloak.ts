@@ -1,18 +1,11 @@
-import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
-import { prefab_venomCloakEffect } from "../../effects/prefabs.ts";
+import { prefab_venomCloakEffect } from "../../effects/effect_prefabs.ts";
 import { is } from "../../../lib/std.ts";
 import VenomCloakEffect from "../../effects/VenomCloakEffect.ts";
 import { showInfo } from "../../core.ts";
-import { prefab_assassin } from "../class/prefabs.ts";
+import Spell from "../Spell.ts";
 
 
-
-export const prefab_venomCloak: SpellPrefab = {
-    name: "Venom Cloak",
-    description: "The caster puts on Venom Cloak that adds stack of venom to target it physical spell was used. This cloak stays on until the venom stacks are used up",
-    class: prefab_assassin,
-}
 
 export default class VenomCloak extends Spell {
     public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {

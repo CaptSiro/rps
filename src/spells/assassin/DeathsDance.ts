@@ -1,17 +1,10 @@
-import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import StatChange from "../../effects/StatChange.ts";
-import { prefab_sharpSpeedIncrease } from "../../effects/prefabs.ts";
+import { prefab_sharpSpeedIncrease } from "../../effects/effect_prefabs.ts";
 import { instantiate, showInfo } from "../../core.ts";
-import { prefab_assassin } from "../class/prefabs.ts";
+import Spell from "../Spell.ts";
 
 
-
-export const prefab_deathsDance: SpellPrefab = {
-    name: "Death's Dance",
-    description: "Sharply increases evasion for 3 rounds",
-    class: prefab_assassin,
-};
 
 export default class DeathsDance extends Spell {
     public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
