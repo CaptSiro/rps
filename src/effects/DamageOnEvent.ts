@@ -19,7 +19,7 @@ export default class DamageOnEvent extends Effect {
         caster: Entity,
         target: Entity
     ) {
-        super(caster, target, prefab.name, prefab.lifespan);
+        super(prefab, caster, target);
     }
 
 
@@ -33,11 +33,11 @@ export default class DamageOnEvent extends Effect {
     }
 
     public getRemovedMessage(): string {
-        return this.target.getName() + ' healed ' + this.name;
+        return this.target + ' healed ' + this;
     }
 
     public async proc(): Promise<void> {
-        await showInfo([this.target.getName() + ' is affected by ' + this.name]);
+        await showInfo([this.target + ' is affected by ' + this]);
         await this.caster.dealDamage(
             this.target,
             this.prefab.createBaseDamage(this.caster, this.target)
@@ -46,7 +46,7 @@ export default class DamageOnEvent extends Effect {
 
 
 
-    async onRoundEnd(): Promise<void> {
+    public async onRoundEnd(): Promise<void> {
         await super.onRoundEnd();
         await this.proc();
     }

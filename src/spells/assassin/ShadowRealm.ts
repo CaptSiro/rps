@@ -1,7 +1,8 @@
 import Spell from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
-import ShadowRealmEffect, { prefab_shadowRealmEffect } from "../../effects/ShadowRealmEffect.ts";
 import { showInfo } from "../../core.ts";
+import ShadowRealmEffect from "../../effects/ShadowRealmEffect.ts";
+import { prefab_shadowRealmEffect } from "../../effects/prefabs.ts";
 
 
 

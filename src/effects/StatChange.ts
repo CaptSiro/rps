@@ -11,25 +11,18 @@ export type StatChangePrefab = {
 };
 
 export default class StatChange extends Effect {
-    protected processed: number;
-
     public constructor(
         protected prefab: StatChangePrefab,
         caster: Entity,
         target: Entity
     ) {
-        super(caster, target, prefab.name);
-        this.processed = 0;
+        super(prefab, caster, target);
     }
 
 
 
     public isHarmful(): boolean {
         return false;
-    }
-
-    public doRemove(): boolean {
-        return this.processed >= this.prefab.lifespan;
     }
 
     public modifyStats(stats: EntityStats): EntityStats {

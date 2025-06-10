@@ -14,14 +14,15 @@ export type EffectPrefab = {
 
 export default class Effect {
     protected round: number;
+    protected lifespan: number;
 
     protected constructor(
+        protected prefab: EffectPrefab,
         protected caster: Entity,
         protected target: Entity,
-        protected name: string,
-        protected lifespan: number = Number.POSITIVE_INFINITY
     ) {
         this.round = 0;
+        this.lifespan = this.prefab.lifespan ?? Number.POSITIVE_INFINITY;
     }
 
     public toString(): string {
@@ -31,7 +32,7 @@ export default class Effect {
 
 
     public getName(): string {
-        return this.name;
+        return this.prefab.name;
     }
 
     public isHarmful(): boolean {
@@ -55,7 +56,7 @@ export default class Effect {
     }
 
     public doRemove(): boolean {
-        return this.round >= this.lifespan;
+        return this.round > this.lifespan;
     }
 
     public getRemovedMessage(): string {
@@ -63,7 +64,7 @@ export default class Effect {
     }
 
     public is(prefab: Prefab): boolean {
-        return this.name === prefab.name;
+        return this.prefab.name === prefab.name;
     }
 
 

@@ -16,7 +16,7 @@ export class Venom extends Effect {
         caster: Entity,
         target: Entity
     ) {
-        super(caster, target, prefab.name, prefab.lifespan);
+        super(prefab, caster, target);
     }
 
 

@@ -4,6 +4,7 @@ import { StatChangePrefab } from "./StatChange.ts";
 import { VenomPrefab } from "./Venom.ts";
 import { instantiate } from "../core.ts";
 import Damage, { DamageType } from "../health/Damage.ts";
+import { EffectPrefab } from "./Effect.ts";
 
 
 
@@ -39,4 +40,9 @@ export const prefab_venom: VenomPrefab = {
     name: "Venom",
     lifespan: Number.POSITIVE_INFINITY,
     paralyzeChance: 0.1,
+}
+
+export const prefab_shadowRealmEffect: EffectPrefab = {
+    name: "Shadow Realm",
+    lifespan: 1
 }
