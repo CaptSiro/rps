@@ -31,7 +31,7 @@ export default class Paper extends Spell {
             return;
         }
 
-        caster.getEffects().splice(index, 1);
+        await caster.removeEffect(index);
         await info;
     }
 }

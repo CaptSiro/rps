@@ -3,8 +3,14 @@ import Spell from "../spells/Spell.ts";
 import { Prefab } from "../core.ts";
 import Damage from "../health/Damage.ts";
 import Heal from "../health/Heal.ts";
+import { Immunity } from "../Immunity.ts";
 
 
+
+export type EffectPrefab = {
+    name: string,
+    lifespan?: number,
+}
 
 export default class Effect {
     protected round: number;
@@ -18,7 +24,15 @@ export default class Effect {
         this.round = 0;
     }
 
+    public toString(): string {
+        return this.getName();
+    }
 
+
+
+    public getName(): string {
+        return this.name;
+    }
 
     public isHarmful(): boolean {
         return false;
@@ -48,10 +62,6 @@ export default class Effect {
         return 'Effect removed';
     }
 
-    public getName(): string {
-        return this.name;
-    }
-
     public is(prefab: Prefab): boolean {
         return this.name === prefab.name;
     }
@@ -71,6 +81,16 @@ export default class Effect {
     public modifyHeal(heal: Heal): Heal {
         return heal;
     }
+
+    public onTakenDamage(damage: Damage): Immunity {
+        return Immunity.NOT_IMMUNE;
+    }
+
+    public onEffectAdded(effect: Effect): Immunity {
+        return Immunity.NOT_IMMUNE;
+    }
+
+    public async onRemove(): Promise<void> {}
 
     public async onBind(): Promise<void> {}
 

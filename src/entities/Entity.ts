@@ -11,6 +11,7 @@ import Battle from "../Battle.ts";
 import Damage from "../health/Damage.ts";
 import { expFalloff } from "../../lib/std.ts";
 import Heal from "../health/Heal.ts";
+import { Immunity } from "../Immunity.ts";
 
 
 
@@ -205,9 +206,23 @@ export default class Entity {
         return [this.effects[index], index];
     }
 
-    public async addEffect(effect: Effect): Promise<void> {
+    public async addEffect(effect: Effect): Promise<boolean> {
+        if (this.modifyAddedEffect(effect) === Immunity.IMMUNE) {
+            await showInfo([this + " is immune to " + effect]);
+            return false;
+        }
+
         this.effects.push(effect);
         await effect.onBind();
+        return true;
+    }
+
+    public async removeEffect(index: number): Promise<void> {
+        const effect = this.effects[index];
+        this.effects.splice(index, 1);
+
+        await effect.onRemove();
+        await showInfo([effect.getRemovedMessage()]);
     }
 
 
@@ -219,11 +234,31 @@ export default class Entity {
         );
     }
 
+    public modifyDamageTaken(damage: Damage): Immunity {
+        for (const effect of this.effects) {
+            if (effect.onTakenDamage(damage) === Immunity.IMMUNE) {
+                return Immunity.IMMUNE;
+            }
+        }
+
+        return Immunity.NOT_IMMUNE;
+    }
+
     public modifyHeal(heal: Heal): Heal {
         return this.effects.reduce(
             (h, x) => x.modifyHeal(h),
             heal
         );
+    }
+
+    public modifyAddedEffect(effect: Effect): Immunity {
+        for (const effect of this.effects) {
+            if (effect.onEffectAdded(effect) === Immunity.IMMUNE) {
+                return Immunity.IMMUNE;
+            }
+        }
+
+        return Immunity.NOT_IMMUNE;
     }
 
     public async dealDamage(target: Entity, damage: Damage): Promise<boolean> {
@@ -233,6 +268,11 @@ export default class Entity {
     protected async takeDamage(initiator: Entity, damage: Damage): Promise<boolean> {
         if (isNaN(damage.getBase())) {
             throw new Error('Can not take NaN damage');
+        }
+
+        if (this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
+            await showInfo([this + " is immune"]);
+            return false;
         }
 
         const stats = this.getStats();
@@ -281,8 +321,7 @@ export default class Entity {
                 continue;
             }
 
-            this.effects.splice(i, 1);
-            await showInfo([effect.getRemovedMessage()]);
+            await this.removeEffect(i);
             i -= 1;
         }
     }
