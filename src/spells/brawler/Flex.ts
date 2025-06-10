@@ -1,17 +1,10 @@
-import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { showInfo } from "../../core.ts";
-import { prefab_intimidated } from "../../effects/effect_prefabs.ts";
+import { prefab_intimidated } from "../../effects/_prefabs_effect.ts";
 import Intimidated from "../../effects/Intimidated.ts";
-import { prefab_brawler } from "../class/prefabs.ts";
+import Spell from "../Spell.ts";
 
 
-
-export const prefab_flex: SpellPrefab = {
-    name: "Flex",
-    description: "Caster and target flexes their strength. The stronger will intimidate the weaker lowering their strength and toughness. Intimidation stacks upto 3 times",
-    class: prefab_brawler,
-}
 
 export default class Flex extends Spell {
     protected async addIntimidated(caster: Entity, target: Entity): Promise<void> {

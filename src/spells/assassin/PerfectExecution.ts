@@ -1,4 +1,4 @@
-import Spell, { SpellPrefab } from "../Spell.ts";
+import Spell from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { showInfo } from "../../core.ts";
 import Damage, { DamageType } from "../../health/Damage.ts";

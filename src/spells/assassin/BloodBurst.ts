@@ -1,7 +1,7 @@
 import Spell from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { power, showInfo } from "../../core.ts";
-import { createBleedingPrefab, prefab_bleeding } from "../../effects/effect_prefabs.ts";
+import { createBleedingPrefab, prefab_bleeding } from "../../effects/_prefabs_effect.ts";
 import { is } from "../../../lib/std.ts";
 import DamageOnEvent from "../../effects/DamageOnEvent.ts";
 import Damage, { DamageType } from "../../health/Damage.ts";

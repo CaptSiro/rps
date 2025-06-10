@@ -1,6 +1,6 @@
 import Entity from "../../entities/Entity.ts";
 import StatChange from "../../effects/StatChange.ts";
-import { prefab_sharpSpeedIncrease } from "../../effects/effect_prefabs.ts";
+import { prefab_sharpSpeedIncrease } from "../../effects/_prefabs_effect.ts";
 import { instantiate, showInfo } from "../../core.ts";
 import Spell from "../Spell.ts";
 

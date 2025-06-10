@@ -1,5 +1,5 @@
 import Entity from "../../entities/Entity.ts";
-import { prefab_venomCloakEffect } from "../../effects/effect_prefabs.ts";
+import { prefab_venomCloakEffect } from "../../effects/_prefabs_effect.ts";
 import { is } from "../../../lib/std.ts";
 import VenomCloakEffect from "../../effects/VenomCloakEffect.ts";
 import { showInfo } from "../../core.ts";
