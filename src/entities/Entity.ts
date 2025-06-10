@@ -197,6 +197,13 @@ export default class Entity {
         return undefined;
     }
 
+    public getEffectStacks(predicate: Predicate<Effect>): number {
+        return this.effects.reduce(
+            (stacks, x) => stacks + Number(predicate(x)),
+            0
+        );
+    }
+
     public findEffect(predicate: Predicate<Effect>): [Opt<Effect>, number] {
         const index = this.effects.findIndex(x => predicate(x));
         if (index === -1) {
