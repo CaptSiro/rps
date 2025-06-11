@@ -20,7 +20,7 @@ const { div, span } = jsml;
 
 
 
-export default class Spell {
+export default class Spell<T extends SpellPrefab = SpellPrefab> {
     protected readonly state: Impulse<Spell>;
     protected readonly uses: number;
 
@@ -31,7 +31,7 @@ export default class Spell {
 
 
     public constructor(
-        protected prefab: SpellPrefab
+        protected prefab: T
     ) {
         this.class = new SpellClass(prefab.class);
         this.disabled = prefab.disabled ?? 0;
@@ -55,7 +55,7 @@ export default class Spell {
         return !this.isDisabled() && this.usesLeft > 0;
     }
 
-    public getPrefab(): SpellPrefab {
+    public getPrefab(): T {
         return this.prefab;
     }
 

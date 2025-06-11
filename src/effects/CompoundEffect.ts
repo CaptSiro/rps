@@ -1,5 +1,5 @@
 import Effect, { EffectPrefab } from "./Effect.ts";
-import { EntityStats } from "../entities/Entity.ts";
+import Entity, { EntityStats } from "../entities/Entity.ts";
 import Damage from "../health/Damage.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
@@ -9,7 +9,21 @@ import { Producer } from "../../types.ts";
 
 
 export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> extends Effect<T> {
-    protected effects: Effect[] = [];
+    protected effects: Effect[];
+
+    public constructor(
+        prefab: T,
+        caster: Entity,
+        target: Entity
+    ) {
+        super(prefab, caster, target);
+        this.effects = [];
+        this.init();
+    }
+
+    public init(): void {}
+
+
 
     public add(effect: Effect): void {
         this.effects.push(effect);

@@ -8,6 +8,7 @@ import { VenomCloakEffectPrefab } from "./VenomCloakEffect.ts";
 import { IntimidatedPrefab } from "./Intimidated.ts";
 import { EffectType } from "./EffectType.ts";
 import { BindingPrefab } from "./Binding.ts";
+import { ConfusionPrefab } from "./Confusion.ts";
 
 
 
@@ -73,4 +74,11 @@ export const prefab_binding: BindingPrefab = {
     type: EffectType.STATISTIC,
     lifespan: 3,
     damageBase: 1
+};
+
+export const prefab_confusion: ConfusionPrefab = {
+    name: "Confusion",
+    type: EffectType.STATISTIC,
+    lifespan: 1,
+    power: 10
 };

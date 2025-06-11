@@ -1,5 +1,6 @@
 import { SpellPrefab } from "../Spell.ts";
 import { prefab_brawler } from "../class/prefabs.ts";
+import { HeadbuttPrefab } from "./Headbutt.ts";
 
 
 
@@ -27,4 +28,12 @@ export const prefab_furyPunch: SpellPrefab = {
     description: "Deal small to large amount of damage to the target scaling from caster's missing health",
     class: prefab_brawler,
     power: 60,
+};
+
+export const prefab_headbutt: HeadbuttPrefab = {
+    name: "Headbutt",
+    description: "Deal large amount of damage to the target. The caster takes 20% damage dealt. Caster and target have a chance to be affected by Confusion for next round",
+    class: prefab_brawler,
+    power: 50,
+    confusionChance: .33,
 };
