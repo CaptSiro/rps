@@ -36,6 +36,14 @@ export function power(prefab: SpellPrefab, or: number): number {
     return prefab.power ?? or;
 }
 
+/**
+ * Converts health to HP stat
+ * @param health
+ */
+export function hp(health: number): number {
+    return health / 10;
+}
+
 export function showScreen(screen: string): void {
     for (const s of screens) {
         s.classList.toggle('hide', s.dataset.screen !== screen);

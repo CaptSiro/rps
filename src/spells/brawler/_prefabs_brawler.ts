@@ -21,3 +21,10 @@ export const prefab_deathGrip: SpellPrefab = {
     description: "Deal small amount of damage and Binding effect",
     class: prefab_brawler,
 };
+
+export const prefab_furyPunch: SpellPrefab = {
+    name: "Fury Punch",
+    description: "Deal small to large amount of damage to the target scaling from caster's missing health",
+    class: prefab_brawler,
+    power: 60,
+};

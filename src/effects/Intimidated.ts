@@ -1,5 +1,5 @@
 import { EffectPrefab } from "./Effect.ts";
-import Entity, { EntityStats } from "../entities/Entity.ts";
+import Entity from "../entities/Entity.ts";
 import CompoundEffect from "./CompoundEffect.ts";
 import StatChange from "./StatChange.ts";
 import { EffectType } from "./EffectType.ts";
