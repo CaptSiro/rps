@@ -8,13 +8,6 @@ import { EffectType } from "../../effects/EffectType.ts";
 
 
 
-export const prefab_paper: SpellPrefab = {
-    name: 'Paper',
-    description: 'Heals caster, removes one harmful effect, and disables opponent\'s spell for 1 round',
-    class: prefab_cleric,
-    power: 20,
-};
-
 export default class Paper extends Spell {
     async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         const info = showInfo([

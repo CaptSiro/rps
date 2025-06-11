@@ -92,6 +92,14 @@ export function randomInt(a: number, b: number): number {
     return Math.floor(random(a, b));
 }
 
+export function randomItem<T>(array: T[]): Opt<T> {
+    if (array.length <= 0) {
+        return;
+    }
+
+    return array[randomInt(0, array.length)];
+}
+
 
 
 const relativeTimeFormat = new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' });

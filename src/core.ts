@@ -44,6 +44,14 @@ export function hp(health: number): number {
     return health / 10;
 }
 
+/**
+ * Converts evasiveness stat to speed
+ * @param evasiveness
+ */
+export function speed(evasiveness: number): number {
+    return evasiveness / 10;
+}
+
 export function showScreen(screen: string): void {
     for (const s of screens) {
         s.classList.toggle('hide', s.dataset.screen !== screen);

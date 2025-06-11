@@ -1,4 +1,4 @@
-import { instantiate, showInfo } from "../core";
+import { instantiate, showInfo, speed } from "../core";
 import Health from "../components/Health";
 import SpellPreview from "../components/SpellPreview";
 import Impulse from "../../lib/Impulse.ts";
@@ -286,7 +286,7 @@ export default class Entity {
 
         const stats = this.getStats();
         if (damage.isAvoidable()) {
-            const chance = expFalloff(stats.evasiveness);
+            const chance = expFalloff(speed(stats.evasiveness));
             if (Math.random() < chance) {
                 await showInfo([initiator + ' missed']);
                 return 0;

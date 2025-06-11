@@ -33,12 +33,13 @@ export function createBleedingPrefab(dexterity: number): DamageOverTimePrefab {
     return bleeding;
 }
 
-export const prefab_sharpSpeedIncrease: StatChangePrefab = {
-    name: "Sharp speed increase",
+export const prefab_sharpStatIncrease: StatChangePrefab = {
+    name: "Sharp stat increase",
+    nameTemplate: stat => `"Sharp ${stat} increase"`,
     type: EffectType.STATISTIC,
     lifespan: 3,
-    stat: "evasiveness",
-    calculateStat: (speed) => speed + 0.5,
+    stat: "luck",
+    calculateStat: x => x * 1.50,
 };
 
 export const prefab_venom: VenomPrefab = {
