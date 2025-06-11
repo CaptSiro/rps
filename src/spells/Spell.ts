@@ -45,6 +45,10 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         });
     }
 
+    public toString(): string {
+        return this.getName();
+    }
+
 
 
     public isDisabled(): boolean {
@@ -92,7 +96,7 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
     }
 
     public usePolicy(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): boolean {
-        return outcome === LOSS;
+        return outcome !== LOSS;
     }
 
     public async perform(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {

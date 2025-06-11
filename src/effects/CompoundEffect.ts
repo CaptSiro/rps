@@ -4,7 +4,6 @@ import Damage from "../health/Damage.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
 import Spell from "../spells/Spell.ts";
-import { Producer } from "../../types.ts";
 import { parallelize } from "../../lib/std.ts";
 
 

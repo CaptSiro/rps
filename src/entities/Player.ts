@@ -9,6 +9,8 @@ import Paper from "../spells/cleric/Paper.ts";
 import { prefab_paper } from "../spells/cleric/_prefabs_cleric.ts";
 import Scissors from "../spells/assassin/Scissors.ts";
 import { prefab_scissors } from "../spells/assassin/_prefabs_assassin.ts";
+import BattleRecord from "../BattleRecord.ts";
+import Battle from "../Battle.ts";
 
 
 
@@ -34,6 +36,17 @@ export function prefab_playerDeck(): Spell[] {
 }
 
 export default class Player extends Entity {
+    public record(record: BattleRecord) {
+        super.record(record);
+
+        const battle = this.battle;
+        if (battle instanceof Battle) {
+            battle.getTournament().addBalance(
+                Math.min(0, record.getReward())
+            );
+        }
+    }
+
     public async onChooseSpell(): Promise<Spell> {
         return await playerChooseSpell(this.spells);
     }
@@ -44,7 +57,7 @@ export default class Player extends Entity {
         );
     }
 
-    getHtml() {
+    public getHtml() {
         return jsml.div({ class: 'entity player' }, [
             jsml.h3({ class: 'name' }, this.prefab.name),
             this.healthBar,

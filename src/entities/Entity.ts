@@ -12,6 +12,7 @@ import Damage from "../health/Damage.ts";
 import { expFalloff, parallelize } from "../../lib/std.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
+import BattleRecord from "../BattleRecord.ts";
 
 
 
@@ -58,6 +59,7 @@ export default class Entity {
 
 
     protected battle: Battle | any;
+    protected history: BattleRecord[];
 
     protected health: number;
     protected readonly healthImpulse: Impulse<number>;
@@ -85,6 +87,7 @@ export default class Entity {
 
         this.spellPreview = SpellPreview(this.spellsImpulse);
         this.effects = [];
+        this.history = [];
     }
 
     public toString(): string {
@@ -350,6 +353,10 @@ export default class Entity {
             await this.removeEffect(i);
             i -= 1;
         }
+    }
+
+    public record(record: BattleRecord): void {
+        this.history.push(record);
     }
 
     public async onBattleStart(battle: Battle): Promise<void> {

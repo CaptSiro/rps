@@ -1,20 +1,37 @@
 import Entity from "./entities/Entity.ts";
 import { showInfo } from "./core.ts";
+import BattleRecord from "./BattleRecord.ts";
+import Tournament from "./Tournament.ts";
 
 
 
 export default class Battle {
+    protected history: [BattleRecord, BattleRecord][];
+
     public constructor(
+        protected tournament: Tournament,
         protected a: Entity,
-        protected b: Entity
-    ) {}
+        protected b: Entity,
+    ) {
+        this.history = [];
+    }
 
 
+
+    public getTournament(): Tournament {
+        return this.tournament;
+    }
 
     public setup(viewport: HTMLElement): void {
         viewport.textContent = "";
         viewport.append(this.a.getHtml());
         viewport.append(this.b.getHtml());
+    }
+
+    protected record(a: BattleRecord, b: BattleRecord): void {
+        this.history.push([a, b]);
+        a.getEntity().record(a);
+        b.getEntity().record(b);
     }
 
     public async start(): Promise<void> {
@@ -46,6 +63,11 @@ export default class Battle {
 
             const aOutcome = aSpell.compare(bSpell);
             const bOutcome = bSpell.compare(aSpell);
+
+            this.record(
+                new BattleRecord(a, aSpell, aOutcome, 1),
+                new BattleRecord(b, bSpell, bOutcome, 1),
+            );
 
             const noOnePerformsSpell = !aSpell.performPolicy(aOutcome, a, b, bSpell) && !bSpell.performPolicy(bOutcome, b, a, aSpell);
             if (noOnePerformsSpell) {

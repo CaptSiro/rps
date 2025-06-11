@@ -1,6 +1,5 @@
 import Effect, { EffectPrefab } from "./Effect.ts";
 import Damage, { DamageType } from "../health/Damage.ts";
-import { Immunity } from "../Immunity.ts";
 import { Venom } from "./Venom.ts";
 import { prefab_venom } from "./_prefabs_effect.ts";
 import Entity from "../entities/Entity.ts";

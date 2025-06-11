@@ -23,24 +23,6 @@ export const DRAW: Draw = 0;
 
 
 export default class SpellClass {
-    public static outcome(caller: SpellClass[], opponent: SpellClass[]): Outcome {
-        // sum = sum_i^n(sum_j^m(compare(c_i, o_j)))
-        const sum = caller.reduce((s, callerClass) => {
-            return s + opponent.reduce((ss, opponentClass) => {
-                return ss + callerClass.compare(opponentClass);
-            }, 0);
-        }, 0);
-
-        const sign = Math.sign(sum);
-        if (sign === -0) {
-            return DRAW;
-        }
-
-        return sign as Outcome;
-    }
-
-
-
     public constructor(
         protected prefab: ClassPrefab
     ) {}

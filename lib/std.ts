@@ -1,5 +1,4 @@
 import { Opt, Producer } from "./../types.ts";
-import Effect from "../src/effects/Effect.ts";
 
 export type RelativeTimestamp = {
     name: string | any,
