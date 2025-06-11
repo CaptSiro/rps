@@ -1,4 +1,5 @@
-import { Opt } from "./../types.ts";
+import { Opt, Producer } from "./../types.ts";
+import Effect from "../src/effects/Effect.ts";
 
 export type RelativeTimestamp = {
     name: string | any,
@@ -83,6 +84,17 @@ export function wait(ms: number): Promise<void> {
         resolve => setTimeout(resolve, ms)
     );
 }
+
+export async function parallelize<T>(array: T[], producer: Producer<T, Promise<void>>): Promise<void> {
+    const promises = new Array(array.length);
+
+    for (let i = 0; i < array.length; i++) {
+        promises[i] = producer(array[i]);
+    }
+
+    await Promise.all(promises);
+}
+
 
 export function random(a: number, b: number): number {
     return lerp(a, b, Math.random());

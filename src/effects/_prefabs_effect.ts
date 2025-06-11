@@ -9,6 +9,7 @@ import { IntimidatedPrefab } from "./Intimidated.ts";
 import { EffectType } from "./EffectType.ts";
 import { BindingPrefab } from "./Binding.ts";
 import { ConfusionPrefab } from "./Confusion.ts";
+import { HealingPackageEffectPrefab } from "./HealingPackageEffect.ts";
 
 
 
@@ -83,3 +84,10 @@ export const prefab_confusion: ConfusionPrefab = {
     lifespan: 1,
     power: 10
 };
+
+export const prefab_healingPackageEffect: HealingPackageEffectPrefab = {
+    name: "Healing Package",
+    type: EffectType.DEFENSE,
+    lifespan: 5,
+    percentageHealed: .80
+}

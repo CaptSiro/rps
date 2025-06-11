@@ -27,18 +27,18 @@ export default class VenomCloakEffect extends Effect<VenomCloakEffectPrefab> {
 
 
 
-    public async onTakenDamage(damage: Damage): Promise<Immunity> {
-        if (damage.getType() === DamageType.PHYSICAL && this.venomDosesLeft > 0) {
-            await damage.getTarget().addEffect(new Venom(
-                prefab_venom,
-                this.caster,
-                damage.getTarget())
-            );
-
-            this.venomDosesLeft--;
+    public async onDamageTaken(damage: Damage): Promise<void> {
+        if (damage.getType() !== DamageType.PHYSICAL || this.venomDosesLeft <= 0) {
+            return;
         }
 
-        return Immunity.NOT_IMMUNE;
+        await damage.getTarget().addEffect(new Venom(
+            prefab_venom,
+            this.caster,
+            damage.getTarget())
+        );
+
+        this.venomDosesLeft--;
     }
 
     public doRemove(): boolean {

@@ -9,7 +9,7 @@ import jsml from "../../lib/jsml/jsml.ts";
 import Effect from "../effects/Effect.ts";
 import Battle from "../Battle.ts";
 import Damage from "../health/Damage.ts";
-import { expFalloff } from "../../lib/std.ts";
+import { expFalloff, parallelize } from "../../lib/std.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
 
@@ -241,9 +241,9 @@ export default class Entity {
         );
     }
 
-    public async modifyDamageTaken(damage: Damage): Promise<Immunity> {
+    public modifyDamageTaken(damage: Damage): Immunity {
         for (const effect of this.effects) {
-            if (await effect.onTakenDamage(damage) === Immunity.IMMUNE) {
+            if (effect.modifyDamageTaken(damage) === Immunity.IMMUNE) {
                 return Immunity.IMMUNE;
             }
         }
@@ -274,14 +274,13 @@ export default class Entity {
         return await target.takeDamage(this, this.modifyDamage(damage));
     }
 
+    public async onDamageTaken(damage: Damage): Promise<void> {
+        await parallelize(this.effects, x => x.onDamageTaken(damage));
+    }
+
     protected async takeDamage(initiator: Entity, damage: Damage): Promise<number> {
         if (isNaN(damage.getBase())) {
             throw new Error('Can not take NaN damage');
-        }
-
-        if (await this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
-            await showInfo([this + " is immune"]);
-            return 0;
         }
 
         const stats = this.getStats();
@@ -293,11 +292,27 @@ export default class Entity {
             }
         }
 
+        if (this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
+            await showInfo([this + " is immune"]);
+            return 0;
+        }
+
         const resistance = stats.toughness / 50;
         const absorption = Math.max(0, expFalloff(resistance));
         const amount = damage.getAmount(absorption);
         const dealt = Math.min(this.health, amount);
+
         this.health -= dealt;
+
+        const damageDealt = new Damage(
+            damage.getType(),
+            dealt,
+            damage.getPower(),
+        );
+        damageDealt.setInitiator(damage.getInitiator());
+        damageDealt.setTarget(damage.getTarget());
+
+        await this.onDamageTaken(damageDealt);
 
         if (this.health <= 0) {
             this.health = 0;

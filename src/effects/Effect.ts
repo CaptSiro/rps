@@ -89,9 +89,11 @@ export default class Effect<T extends EffectPrefab = EffectPrefab> {
         return heal;
     }
 
-    public async onTakenDamage(damage: Damage): Promise<Immunity> {
+    public modifyDamageTaken(damage: Damage): Immunity {
         return Immunity.NOT_IMMUNE;
     }
+
+    public async onDamageTaken(damage: Damage): Promise<void> {}
 
     public async onEffectAdded(effect: Effect): Promise<Immunity> {
         return Immunity.NOT_IMMUNE;

@@ -14,7 +14,7 @@ export default class DivineBlessing extends Spell {
             // "luck",
             "toughness",
             "maxHealth",
-            // "intelligence",
+            "intelligence",
             "strength",
             "dexterity"
         ];

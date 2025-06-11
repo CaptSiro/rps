@@ -1,7 +1,7 @@
 export default class Heal {
     public constructor(
         protected base: number,
-        protected power: number,
+        protected power: number = 1 / .15,
     ) {}
 
 
@@ -23,6 +23,6 @@ export default class Heal {
     }
 
     public getAmount(): number {
-        return this.base * this.power * 0.15;
+        return this.base * this.power * .15;
     }
 }

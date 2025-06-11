@@ -5,7 +5,7 @@ import { Immunity } from "../Immunity.ts";
 
 
 export default class ShadowRealmEffect extends Effect {
-    public async onTakenDamage(damage: Damage): Promise<Immunity> {
+    public modifyDamageTaken(damage: Damage): Immunity {
         return Immunity.IMMUNE;
     }
 

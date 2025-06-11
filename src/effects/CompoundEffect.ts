@@ -5,6 +5,7 @@ import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
 import Spell from "../spells/Spell.ts";
 import { Producer } from "../../types.ts";
+import { parallelize } from "../../lib/std.ts";
 
 
 
@@ -39,17 +40,8 @@ export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> exten
         return super.doRemove();
     }
 
-    public async parallelize(producer: Producer<Effect, Promise<void>>): Promise<void> {
-        const promises = new Array(this.effects.length);
-        for (let i = 0; i < this.effects.length; i++) {
-            promises[i] = producer(this.effects[i]);
-        }
-
-        await Promise.all(promises);
-    }
-
     public async proc(): Promise<void> {
-        await this.parallelize(x => x.proc());
+        await parallelize(this.effects, x => x.proc());
     }
 
     public modifyStats(stats: EntityStats): EntityStats {
@@ -66,6 +58,16 @@ export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> exten
         );
     }
 
+    public modifyDamageTaken(damage: Damage): Immunity {
+        for (const effect of this.effects) {
+            if (effect.modifyDamageTaken(damage) === Immunity.IMMUNE) {
+                return Immunity.IMMUNE;
+            }
+        }
+
+        return Immunity.NOT_IMMUNE;
+    }
+
     public modifyHeal(heal: Heal): Heal {
         return this.effects.reduce(
             (h, x) => x.modifyHeal(h),
@@ -73,14 +75,8 @@ export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> exten
         );
     }
 
-    public async onTakenDamage(damage: Damage): Promise<Immunity> {
-        for (const effect of this.effects) {
-            if (await effect.onTakenDamage(damage) === Immunity.IMMUNE) {
-                return Immunity.IMMUNE;
-            }
-        }
-
-        return Immunity.NOT_IMMUNE;
+    public async onDamageTaken(damage: Damage): Promise<void> {
+        await parallelize(this.effects, x => x.onDamageTaken(damage));
     }
 
     public async onEffectAdded(effect: Effect): Promise<Immunity> {
@@ -94,19 +90,19 @@ export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> exten
     }
 
     public async onRemove(): Promise<void> {
-        await this.parallelize(x => x.onRemove());
+        await parallelize(this.effects, x => x.onRemove());
     }
 
     public async onBind(): Promise<void> {
-        await this.parallelize(x => x.onBind());
+        await parallelize(this.effects, x => x.onBind());
     }
 
     public async onBattleStart(): Promise<void> {
-        await this.parallelize(x => x.onBattleStart());
+        await parallelize(this.effects, x => x.onBattleStart());
     }
 
     public async onRoundStart(): Promise<void> {
-        await this.parallelize(x => x.onRoundStart());
+        await parallelize(this.effects, x => x.onRoundStart());
     }
 
     public async onSpellPerform(spell: Spell): Promise<boolean> {
@@ -121,6 +117,6 @@ export default class CompoundEffect<T extends EffectPrefab = EffectPrefab> exten
 
     public async onRoundEnd(): Promise<void> {
         await super.onRoundEnd();
-        await this.parallelize(x => x.onRoundEnd());
+        await parallelize(this.effects, x => x.onRoundEnd());
     }
 }
