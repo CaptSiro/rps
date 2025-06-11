@@ -7,3 +7,4 @@ export type Reference<T> = {
 }
 
 export type Predicate<T> = (item: T) => boolean;
+export type Producer<X, R> = (x: X) => R;

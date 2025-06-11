@@ -66,7 +66,7 @@ export default class Effect<T extends EffectPrefab = EffectPrefab> {
     }
 
     public getRemovedMessage(): string {
-        return 'Effect removed';
+        return this + ' removed';
     }
 
     public is(prefab: Prefab): boolean {

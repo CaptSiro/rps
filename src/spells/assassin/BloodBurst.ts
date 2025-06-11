@@ -3,7 +3,7 @@ import Entity from "../../entities/Entity.ts";
 import { power, showInfo } from "../../core.ts";
 import { createBleedingPrefab, prefab_bleeding } from "../../effects/_prefabs_effect.ts";
 import { is } from "../../../lib/std.ts";
-import DamageOnEvent from "../../effects/DamageOnEvent.ts";
+import DamageOverTime from "../../effects/DamageOverTime.ts";
 import Damage, { DamageType } from "../../health/Damage.ts";
 
 
@@ -19,7 +19,7 @@ export default class BloodBurst extends Spell {
             bleeding.setLifespan(5);
         } else {
             await showInfo([`${caster} strikes ${target}`]);
-            bleeding = new DamageOnEvent(createBleedingPrefab(stats.dexterity), caster, target);
+            bleeding = new DamageOverTime(createBleedingPrefab(stats.dexterity), caster, target);
             await target.addEffect(bleeding);
         }
 

@@ -98,7 +98,10 @@ export default class Spell {
     public async perform(outcome: Outcome, caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         if (this.performPolicy(outcome, caster, target, targetSpell)) {
             if (await caster.onSpellPerform(this)) {
-                await showInfo([caster.getPrefab().name + ' wins the round.']);
+                await showInfo([
+                    caster + ' wins the round.',
+                    caster + ' used ' + this
+                ]);
                 await this.action(caster, target, targetSpell);
             }
         }

@@ -15,3 +15,9 @@ export const prefab_flex: SpellPrefab = {
     description: "Caster and target flexes their strength. The stronger will intimidate the weaker lowering their strength and toughness. Intimidation stacks upto 3 times",
     class: prefab_brawler,
 };
+
+export const prefab_deathGrip: SpellPrefab = {
+    name: "Death Grip",
+    description: "Deal small amount of damage and Binding effect",
+    class: prefab_brawler,
+};

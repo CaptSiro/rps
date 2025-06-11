@@ -5,13 +5,11 @@ import Damage from "../health/Damage.ts";
 
 
 
-export type DamageOnEventPrefab = {
-    event: string,
+export type DamageOverTimePrefab = {
     createBaseDamage: (caster: Entity, target: Entity) => Damage;
-    reduceAble?: boolean,
 } & EffectPrefab;
 
-export default class DamageOnEvent extends Effect<DamageOnEventPrefab> {
+export default class DamageOverTime extends Effect<DamageOverTimePrefab> {
     public getRemovedMessage(): string {
         return this.target + ' healed ' + this;
     }
