@@ -37,3 +37,10 @@ export const prefab_headbutt: HeadbuttPrefab = {
     power: 50,
     confusionChance: .33,
 };
+
+export const prefab_berserk: SpellPrefab = {
+    name: "Berserk",
+    description: "The caster goes berserk and deals moderate damage 3-5 times and takes 20% of damage dealt as consequence",
+    class: prefab_brawler,
+    power: 30,
+};

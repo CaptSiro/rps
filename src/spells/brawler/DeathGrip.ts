@@ -10,13 +10,13 @@ import Damage, { DamageType } from "../../health/Damage.ts";
 export default class DeathGrip extends Spell {
     public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         const stats = caster.getStats();
-        const hit = await caster.dealDamage(target, new Damage(
+        const dealt = await caster.dealDamage(target, new Damage(
             DamageType.PHYSICAL,
             stats.strength,
             power(this.prefab, 10)
         ));
 
-        if (!hit) {
+        if (dealt <= 0) {
             return;
         }
 

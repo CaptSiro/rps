@@ -268,20 +268,20 @@ export default class Entity {
         return Immunity.NOT_IMMUNE;
     }
 
-    public async dealDamage(target: Entity, damage: Damage): Promise<boolean> {
+    public async dealDamage(target: Entity, damage: Damage): Promise<number> {
         damage.setInitiator(this);
         damage.setTarget(target);
         return await target.takeDamage(this, this.modifyDamage(damage));
     }
 
-    protected async takeDamage(initiator: Entity, damage: Damage): Promise<boolean> {
+    protected async takeDamage(initiator: Entity, damage: Damage): Promise<number> {
         if (isNaN(damage.getBase())) {
             throw new Error('Can not take NaN damage');
         }
 
         if (await this.modifyDamageTaken(damage) === Immunity.IMMUNE) {
             await showInfo([this + " is immune"]);
-            return false;
+            return 0;
         }
 
         const stats = this.getStats();
@@ -289,20 +289,22 @@ export default class Entity {
             const chance = expFalloff(stats.evasiveness);
             if (Math.random() < chance) {
                 await showInfo([initiator + ' missed']);
-                return false;
+                return 0;
             }
         }
 
         const resistance = stats.toughness / 50;
         const absorption = Math.max(0, expFalloff(resistance));
-        this.health -= damage.getAmount(absorption);
+        const amount = damage.getAmount(absorption);
+        const dealt = Math.min(this.health, amount);
+        this.health -= dealt;
 
-        if (this.health < 0) {
+        if (this.health <= 0) {
             this.health = 0;
         }
 
         this.healthImpulse.pulse(this.health / this.prefab.stats.maxHealth);
-        return true;
+        return dealt;
     }
 
     public heal(heal: Heal): void {

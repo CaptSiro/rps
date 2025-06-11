@@ -15,13 +15,13 @@ export default class Headbutt extends Spell<HeadbuttPrefab> {
     public async action(caster: Entity, target: Entity, targetSpell: Spell): Promise<void> {
         const stats = caster.getStats();
 
-        const hit = await caster.dealDamage(target, new Damage(
+        const dealt = await caster.dealDamage(target, new Damage(
             DamageType.PHYSICAL,
             stats.strength,
             power(this.prefab, 50)
         ));
 
-        if (!hit) {
+        if (dealt <= 0) {
             return;
         }
 
@@ -33,12 +33,12 @@ export default class Headbutt extends Spell<HeadbuttPrefab> {
 
         await showInfo([
             caster + " headbutted " + target,
-            caster + " takes recoil damage for using headbutt"
+            caster + " takes recoil damage"
         ]);
 
-        await caster.dealDamage(target, new Damage(
+        await caster.dealDamage(caster, new Damage(
             DamageType.TRUE,
-            stats.strength * .20,
+            dealt * .20,
             power(this.prefab, 50)
         ));
     }
