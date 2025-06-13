@@ -13,6 +13,7 @@ import { expFalloff, parallelize } from "../../lib/std.ts";
 import Heal from "../health/Heal.ts";
 import { Immunity } from "../Immunity.ts";
 import BattleRecord from "../BattleRecord.ts";
+import Deck from "../Deck.ts";
 
 
 
@@ -74,8 +75,8 @@ export default class Entity {
 
     constructor(
         protected readonly prefab: EntityPrefab,
-        protected readonly spells: Spell[],
-        protected readonly deck: () => Spell[],
+        protected spells: Spell[],
+        protected deck: Deck,
     ) {
         this.health = prefab.stats.maxHealth;
         this.healthImpulse = new Impulse({ default: 1, pulseOnDuplicate: true });
@@ -127,8 +128,8 @@ export default class Entity {
         return this.prefab.name;
     }
 
-    public getDeck(): Spell[] {
-        return this.deck();
+    public getDeck(): Deck {
+        return this.deck;
     }
 
     public getSpell(name: string): Opt<Spell> {
@@ -360,9 +361,10 @@ export default class Entity {
     }
 
     public async onBattleStart(battle: Battle): Promise<void> {
-        await this.propagateEventToEffects(x => x.onBattleStart());
-
         this.battle = battle;
+        this.spells = this.deck.getDefaultSpells().map(x => x.copy());
+
+        await this.propagateEventToEffects(x => x.onBattleStart());
     }
 
     public async onRoundStart(): Promise<void> {

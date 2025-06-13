@@ -3,22 +3,24 @@ import Deck from "./Deck.ts";
 import Battle from "./Battle.ts";
 import { Opt } from "../types.ts";
 import { assert } from "../lib/std.ts";
-import Opponent from "./Opponent.ts";
+import Impulse from "../lib/Impulse.ts";
+import jsml from "../lib/jsml/jsml.ts";
 
 
 
 export default class Tournament {
     protected current: Opt<Battle>;
     protected currentOpponent: number;
+    protected readonly balanceImpulse: Impulse<number>;
 
     public constructor(
         protected player: Entity,
         protected stats: EntityStats,
-        protected deck: Deck,
         protected balance: number,
-        protected opponents: Opponent[]
+        protected opponents: Entity[]
     ) {
         this.currentOpponent = 0;
+        this.balanceImpulse = new Impulse({ default: this.balance });
     }
 
 
@@ -31,16 +33,13 @@ export default class Tournament {
         return this.stats;
     }
 
-    public getDeck(): Deck {
-        return this.deck;
-    }
-
     public getBalance(): number {
         return this.balance;
     }
 
     public setBalance(balance: number): void {
         this.balance = Math.round(balance);
+        this.balanceImpulse.pulse(this.balance);
     }
 
     public addBalance(difference: number): void {
@@ -60,8 +59,12 @@ export default class Tournament {
 
         return new Battle(
             this,
-            opponent.getEntity(),
+            opponent,
             this.player
         );
+    }
+
+    public getBalanceHtml(): HTMLElement {
+        return jsml.span("balance", this.balanceImpulse);
     }
 }

@@ -121,6 +121,11 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         return this.class.compare(other.class);
     }
 
+    public copy(): Spell<T> {
+        const constructor = Object.getPrototypeOf(this).constructor;
+        return new constructor(this.prefab);
+    }
+
     public getHtml(): HTMLElement {
         let cssClass = '';
         if (this.isDisabled()) {

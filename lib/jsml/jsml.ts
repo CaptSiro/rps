@@ -1,5 +1,6 @@
 import addContent from "./add-content.js";
 import addProps from "./add-props.js";
+import Impulse from "../Impulse.ts";
 
 
 
@@ -7,7 +8,8 @@ export type JSML = {
     [key in keyof HTMLElementTagNameMap]: (props?: any, content?: any) => HTMLElementTagNameMap[key];
 };
 
-export type Content = string | Node | ArrayLike<HTMLElement | Node | string> | HTMLElement[] | HTMLCollection | undefined;
+type ContentItem = string | Node | HTMLElement | Impulse<any>;
+export type Content = ContentItem | ArrayLike<ContentItem> | ContentItem[] | HTMLCollection | undefined;
 export type Props = ({
     [key: string]: ((event: Event) => any) | any
 } & {

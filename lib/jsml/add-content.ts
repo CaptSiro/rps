@@ -1,8 +1,9 @@
 import type { Content } from "./jsml.js";
+import Impulse from "../Impulse.ts";
 
 
 
-export default function addContent(element: HTMLElement, content: Content): void {
+function addContentItem(element: HTMLElement, content: Content): void {
     if (content === undefined) {
         return;
     }
@@ -17,11 +18,23 @@ export default function addContent(element: HTMLElement, content: Content): void
         return;
     }
 
-    if (content instanceof Array) {
-        for (const node of content) {
-            if (node instanceof Node || typeof node === "string") {
-                element.append(node);
-            }
-        }
+    if (content instanceof Impulse) {
+        content.listen(value => {
+            element.textContent = value;
+        });
+
+        element.textContent = content.value();
     }
+}
+
+export default function addContent(element: HTMLElement, content: Content): void {
+    if (content instanceof Array) {
+        for (const item of content) {
+            addContentItem(element, item);
+        }
+
+        return;
+    }
+
+    addContentItem(element, content);
 }
