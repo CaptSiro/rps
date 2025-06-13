@@ -41,7 +41,6 @@ export default class Player extends Entity {
 
         const battle = this.battle;
         if (battle instanceof Battle) {
-            console.log(record.getReward());
             battle.getTournament().addBalance(
                 Math.max(0, record.getReward())
             );

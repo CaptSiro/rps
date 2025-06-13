@@ -1,5 +1,5 @@
 import { SpellPrefab } from "../Spell.ts";
-import { prefab_brawler } from "../class/prefabs.ts";
+import { prefab_brawler } from "../class/_prefabs_classes.ts";
 import { HeadbuttPrefab } from "./Headbutt.ts";
 
 

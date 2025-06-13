@@ -1,6 +1,6 @@
 import Spell, { SpellPrefab } from "./Spell";
 import Entity from "../entities/Entity.ts";
-import { prefab_undefinedClass } from "./class/prefabs.ts";
+import { prefab_undefinedClass } from "./class/_prefabs_classes.ts";
 import { Outcome } from "./class/SpellClass.ts";
 
 

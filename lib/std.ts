@@ -250,6 +250,19 @@ export function previousChild(child: HTMLElement, parent: HTMLElement): Opt<HTML
     return (child.previousElementSibling ?? parent.children[parent.children.length - 1]) as Opt<HTMLElement>;
 }
 
+export function sortChildren(container: HTMLElement, sort: (a: Element, b: Element) => number): void {
+    const elements = Array.from(container.children);
+    elements.sort(sort);
+
+    const fragment = document.createDocumentFragment();
+    for (const element of elements) {
+        fragment.appendChild(element);
+    }
+
+    container.innerHTML = '';
+    container.appendChild(fragment);
+}
+
 
 
 /**

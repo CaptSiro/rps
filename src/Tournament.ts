@@ -1,5 +1,4 @@
 import Entity, { EntityStats } from "./entities/Entity.ts";
-import Deck from "./Deck.ts";
 import Battle from "./Battle.ts";
 import { Opt } from "../types.ts";
 import { assert } from "../lib/std.ts";

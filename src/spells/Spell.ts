@@ -3,6 +3,7 @@ import Impulse from "../../lib/Impulse";
 import Entity from "../entities/Entity.ts";
 import SpellClass, { Outcome, ClassPrefab, WIN, LOSS } from "./class/SpellClass.ts";
 import { showInfo } from "../core.ts";
+import Color from "../Color.ts";
 
 
 
@@ -27,6 +28,7 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
     protected class: SpellClass;
     protected disabled: number;
     protected usesLeft: number;
+    protected played: number;
 
 
 
@@ -36,6 +38,7 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         this.class = new SpellClass(prefab.class);
         this.disabled = prefab.disabled ?? 0;
 
+        this.played = 0;
         this.uses = prefab.uses ?? 1;
         this.usesLeft = this.uses;
 
@@ -59,12 +62,16 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         return !this.isDisabled() && this.usesLeft > 0;
     }
 
-    public getPrefab(): T {
-        return this.prefab;
-    }
-
     public getName(): string {
         return this.prefab.name;
+    }
+
+    public getPriority(): number {
+        if (this.played <= 0) {
+            return Number.NEGATIVE_INFINITY;
+        }
+
+        return this.class.getPriority();
     }
 
     public getState(): Impulse<Spell> {
@@ -88,6 +95,7 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
 
     public use(): void {
         this.usesLeft = Math.max(this.usesLeft - 1, 0);
+        this.played++;
         this.state.pulse(this);
     }
 
@@ -147,6 +155,14 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         ]);
     }
 
+    public getClassColor(): string {
+        if (this.played <= 0) {
+            return Color.fromHex("#808080").toString();
+        }
+
+        return this.class.getColor().toString();
+    }
+
     public getPreviewHtml(): HTMLElement {
         let cssClass = '';
         if (this.isDisabled()) {
@@ -155,13 +171,15 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
             cssClass = 'not-available';
         }
 
-        return jsml.div('overlay-container preview ' + cssClass, [
-            div({ class: 'disabled-overlay' },
-                span(_, String(this.disabled))
-            ),
-            div({ class: 'not-available-overlay' },
-                span(_, 'X')
-            ),
+        if (this.played <= 0) {
+            cssClass += " unknown";
+        }
+
+        const backgroundColor = this.getClassColor();
+        return jsml.div({ class: 'overlay-container preview ' + cssClass, style: { backgroundColor } }, [
+            div('unknown-overlay', span(_, '?')),
+            div('disabled-overlay', span(_, String(this.disabled))),
+            div('not-available-overlay', span(_, 'X')),
         ]);
     }
 }

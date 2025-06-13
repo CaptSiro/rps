@@ -1,7 +1,7 @@
 import Spell, { SpellPrefab } from "../Spell.ts";
 import Entity from "../../entities/Entity.ts";
 import { power, showInfo } from "../../core.ts";
-import { prefab_ranger } from "../class/prefabs.ts";
+import { prefab_ranger } from "../class/_prefabs_classes.ts";
 import Damage, { DamageType } from "../../health/Damage.ts";
 import { randomInt } from "../../../lib/std.ts";
 

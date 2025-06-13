@@ -46,7 +46,8 @@ export default class Battle {
                 break;
             }
 
-            await Promise.all([a.onRoundStart(), b.onRoundStart()]);
+            await a.onRoundStart();
+            await b.onRoundStart();
             const [aSpell, bSpell] = await Promise.all([a.onChooseSpell(), b.onChooseSpell()]);
 
             if (!aSpell.isAvailable()) {
@@ -72,6 +73,13 @@ export default class Battle {
             const noOnePerformsSpell = !aSpell.performPolicy(aOutcome, a, b, bSpell) && !bSpell.performPolicy(bOutcome, b, a, aSpell);
             if (noOnePerformsSpell) {
                 await showInfo(['No one wins, nothing happens.']);
+                if (aSpell.usePolicy(aOutcome, a, b, bSpell)) {
+                    aSpell.use();
+                }
+
+                if (bSpell.usePolicy(bOutcome, b, a, aSpell)) {
+                    bSpell.use();
+                }
             } else {
                 await aSpell.perform(aOutcome, a, b, bSpell);
                 if (!Entity.areAlive(entities)) {
@@ -84,20 +92,22 @@ export default class Battle {
                 }
             }
 
-            await Promise.all([a.onRoundEnd(), b.onRoundEnd()]);
+            await a.onRoundEnd();
+            await b.onRoundEnd();
             if (!Entity.areAlive(entities)) {
                 break;
             }
 
             if (a.getAvailableSpellCount() === 0) {
-                await a.onDrawSpells(a.getDeck());
+                const spells = a.getDeck().getSpells();
+                await a.onDrawSpells(spells);
                 for (const spell of a.getSpells()) {
                     spell.recharge();
                 }
             }
 
             if (b.getAvailableSpellCount() === 0) {
-                await b.onDrawSpells(b.getDeck());
+                await b.onDrawSpells(b.getDeck().getSpells());
                 for (const spell of b.getSpells()) {
                     spell.recharge();
                 }

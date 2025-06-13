@@ -1,6 +1,6 @@
 import { $, assert } from "../lib/std.ts";
 import Entity, { prefab_billy } from "./entities/Entity.ts";
-import Player, { prefab_player, prefab_playerDeck, prefab_playerInitialSpells } from "./entities/Player.ts";
+import Player, { prefab_player, prefab_playerInitialSpells } from "./entities/Player.ts";
 import Deck from "./Deck.ts";
 import Slingshot, { prefab_slingshot } from "./spells/ranger/Slingshot.ts";
 import { ConstantSequence } from "./sequences/ConstantSequence.ts";

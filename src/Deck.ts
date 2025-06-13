@@ -57,4 +57,9 @@ export default class Deck {
         this.priceSequence.next();
         return this.priceSequence.getCurrent();
     }
+
+    public getSpells(): Spell[] {
+        return this.getDefaultSpells()
+            .concat(this.getAdditionalSpells())
+    }
 }

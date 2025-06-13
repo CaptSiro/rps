@@ -2,7 +2,7 @@ import jsml from "../../lib/jsml/jsml";
 import Impulse from "../../lib/Impulse";
 import Spell from "../spells/Spell.ts";
 import { Opt } from "../../types.ts";
-import { is } from "../../lib/std.ts";
+import { is, sortChildren } from "../../lib/std.ts";
 
 
 
@@ -15,6 +15,8 @@ export default function SpellPreview(spells: Impulse<Spell[]>): HTMLElement {
             return;
         }
 
+        items = items.toSorted((a, b) => b.getPriority() - a.getPriority());
+
         container.textContent = '';
 
         for (const item of items) {
@@ -22,6 +24,19 @@ export default function SpellPreview(spells: Impulse<Spell[]>): HTMLElement {
             item.getState().listen(item => {
                 preview.textContent = '';
                 preview.append(item.getPreviewHtml());
+                preview.dataset.priority = String(item.getPriority());
+
+                sortChildren(container, (a, b) => {
+                    const aPriority = a instanceof HTMLElement
+                        ? Number(a.dataset.priority)
+                        : Number.NaN;
+
+                    const bPriority = b instanceof HTMLElement
+                        ? Number(b.dataset.priority)
+                        : Number.NaN;
+
+                    return bPriority - aPriority;
+                });
             });
 
             preview.append(item.getPreviewHtml());

@@ -363,6 +363,7 @@ export default class Entity {
     public async onBattleStart(battle: Battle): Promise<void> {
         this.battle = battle;
         this.spells = this.deck.getDefaultSpells().map(x => x.copy());
+        this.spellsImpulse.pulse(this.spells);
 
         await this.propagateEventToEffects(x => x.onBattleStart());
     }

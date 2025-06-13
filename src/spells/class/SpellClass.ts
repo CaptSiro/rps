@@ -5,6 +5,7 @@ import Color from "../../Color.ts";
 export type ClassIdentifier = string;
 
 export type ClassPrefab = {
+    priority: number,
     name: ClassIdentifier,
     color: Color,
     loosing: ClassIdentifier[],
@@ -27,7 +28,15 @@ export default class SpellClass {
         protected prefab: ClassPrefab
     ) {}
 
+    public toString(): string {
+        return this.getName();
+    }
 
+
+
+    public getPriority(): number {
+        return this.prefab.priority;
+    }
 
     public getName(): string {
         return this.prefab.name;

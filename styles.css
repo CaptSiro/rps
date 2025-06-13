@@ -89,12 +89,18 @@ body {
     }
 }
 
+.unknown-overlay {
+    color: #eeeeee;
+}
+
 .overlay-container {
+    & > .unknown-overlay,
     & > .disabled-overlay,
     & > .not-available-overlay {
         display: none;
     }
 
+    &.unknown > .unknown-overlay,
     &.disabled > .disabled-overlay,
     &.not-available > .not-available-overlay {
         display: flex;
