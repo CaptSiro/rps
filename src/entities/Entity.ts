@@ -75,14 +75,14 @@ export default class Entity {
 
     constructor(
         protected readonly prefab: EntityPrefab,
-        protected spells: Spell[],
+        protected hand: Spell[],
         protected deck: Deck,
     ) {
         this.health = prefab.stats.maxHealth;
         this.healthImpulse = new Impulse({ default: 1, pulseOnDuplicate: true });
         this.healthBar = Health(this.healthImpulse);
         this.spellsImpulse = new Impulse<Spell[]>({
-            default: this.spells,
+            default: this.hand,
             pulseOnDuplicate: true
         });
 
@@ -133,7 +133,7 @@ export default class Entity {
     }
 
     public getSpell(name: string): Opt<Spell> {
-        for (const spell of this.spells) {
+        for (const spell of this.hand) {
             if (spell.getName() === name) {
                 return spell;
             }
@@ -143,19 +143,19 @@ export default class Entity {
     }
 
     public findSpell(predicate: Predicate<Spell>): Opt<[Spell, number]> {
-        const index = this.spells.findIndex(x => predicate(x));
+        const index = this.hand.findIndex(x => predicate(x));
         if (index === -1) {
             return;
         }
 
-        return [this.spells[index], index];
+        return [this.hand[index], index];
     }
 
     public async getRandomAvailableSpell(): Promise<Spell> {
         return new Promise(resolve => {
             let index = Math.floor(Math.random() * this.getAvailableSpellCount());
 
-            for (const spell of this.spells) {
+            for (const spell of this.hand) {
                 if (spell.isAvailable()) {
                     if (index-- === 0) {
                         resolve(spell);
@@ -169,20 +169,20 @@ export default class Entity {
     }
 
     public getSpells(): Spell[] {
-        return this.spells;
+        return this.hand;
     }
 
     public getAvailableSpells(): Spell[] {
-        return this.spells.filter(x => x.isAvailable());
+        return this.hand.filter(x => x.isAvailable());
     }
 
     public getAvailableSpellCount(): number {
-        return this.spells.reduce((sum, x) => sum + Number(x.isAvailable()), 0);
+        return this.hand.reduce((sum, x) => sum + Number(x.isAvailable()), 0);
     }
 
     public addSpell(spell: Spell): void {
-        this.spells.push(spell);
-        this.spellsImpulse.pulse(this.spells);
+        this.hand.push(spell);
+        this.spellsImpulse.pulse(this.hand);
     }
 
 
@@ -362,8 +362,8 @@ export default class Entity {
 
     public async onBattleStart(battle: Battle): Promise<void> {
         this.battle = battle;
-        this.spells = this.deck.getDefaultSpells().map(x => x.copy());
-        this.spellsImpulse.pulse(this.spells);
+        this.hand = this.deck.getDefaultSpells().map(x => x.copy());
+        this.spellsImpulse.pulse(this.hand);
 
         await this.propagateEventToEffects(x => x.onBattleStart());
     }
@@ -371,7 +371,7 @@ export default class Entity {
     public async onRoundStart(): Promise<void> {
         await this.propagateEventToEffects(x => x.onRoundStart());
 
-        for (const spell of this.spells) {
+        for (const spell of this.hand) {
             spell.disable(-1, false);
         }
     }

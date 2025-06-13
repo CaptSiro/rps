@@ -1,6 +1,7 @@
 import jsml, { _ } from "../lib/jsml/jsml.ts";
 import { $, $$, assert, wait } from "../lib/std.ts";
 import Spell, { SpellPrefab } from "./spells/Spell.ts";
+import { Opt } from "../types.ts";
 
 
 
@@ -11,7 +12,7 @@ export type Prefab = {
 
 const { div } = jsml;
 
-export const SCREEN_SPELLS = 'spells';
+export const SCREEN_HAND = 'hand';
 export const SCREEN_INFO = 'info';
 export const SCREEN_ADDITION = 'addition';
 
@@ -52,10 +53,18 @@ export function speed(evasiveness: number): number {
     return evasiveness / 10;
 }
 
-export function showScreen(screen: string): void {
+export function showScreen(screen: string): HTMLElement {
+    let ret: Opt<HTMLElement>;
+
     for (const s of screens) {
+        if (s.dataset.screen === screen) {
+            ret = s;
+        }
+
         s.classList.toggle('hide', s.dataset.screen !== screen);
     }
+
+    return assert(ret);
 }
 
 function getScreensSpells(screen: string): HTMLElement {
@@ -84,8 +93,8 @@ export async function showInfo(lines: string[], delay: number = 500): Promise<un
 
 export async function playerChooseSpell(spells: Spell[]): Promise<Spell> {
     return new Promise(resolve => {
-        showScreen(SCREEN_SPELLS);
-        const spellsContainer = getScreensSpells(SCREEN_SPELLS);
+        const screen = showScreen(SCREEN_HAND);
+        const spellsContainer = assert($('.hand-spells', screen));
         spellsContainer.textContent = '';
 
         for (const spell of spells) {

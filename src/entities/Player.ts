@@ -48,7 +48,7 @@ export default class Player extends Entity {
     }
 
     public async onChooseSpell(): Promise<Spell> {
-        return await playerChooseSpell(this.spells);
+        return await playerChooseSpell(this.hand);
     }
 
     public async onDrawSpells(spells: Spell[]): Promise<void> {

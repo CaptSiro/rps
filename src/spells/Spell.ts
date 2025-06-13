@@ -134,24 +134,34 @@ export default class Spell<T extends SpellPrefab = SpellPrefab> {
         return new constructor(this.prefab);
     }
 
-    public getHtml(): HTMLElement {
-        let cssClass = '';
+    public getOverlayClass(): string {
         if (this.isDisabled()) {
-            cssClass = 'disabled';
-        } else if (!this.isAvailable()) {
-            cssClass = 'not-available';
+            return 'disabled';
         }
 
+        if (!this.isAvailable()) {
+            return 'not-available';
+        }
+
+        return '';
+    }
+
+    public getHtml(): HTMLElement {
         const backgroundColor = this.class.getColor().toString();
-        return div({ class: "overlay-container " + cssClass, style: { backgroundColor } }, [
-            div({ class: 'disabled-overlay' },
-                div({ class: 'circle' }, span(_, String(this.disabled)))
-            ),
-            div({ class: 'not-available-overlay' },
-                div({ class: 'circle' }, span(_, 'X'))
-            ),
-            div({ class: 'title' }, this.prefab.name),
-            div({ class: 'description' }, this.prefab.description),
+        return div({ class: "spell full ", style: { backgroundColor } }, [
+            div("overlay-container " + this.getOverlayClass(), [
+                div({ class: 'disabled-overlay' },
+                    div({ class: 'circle' }, span(_, String(this.disabled)))
+                ),
+                div({ class: 'not-available-overlay' },
+                    div({ class: 'circle' }, span(_, 'X'))
+                ),
+            ]),
+
+            div("spell-content", [
+                div({ class: 'title' }, this.prefab.name),
+                div({ class: 'description' }, this.prefab.description),
+            ])
         ]);
     }
 
